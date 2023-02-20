@@ -1,3 +1,4 @@
+#include "util.hpp"
 #include <iostream>
 #include <player.hpp>
 
@@ -8,6 +9,8 @@ int main() {
   PlayerConfiguration configuration;
   configuration.width = n;
   configuration.height = n;
+  string fs = readFile("../assets/glow.frag");
+  configuration.fragmentShaderOverride = fs.c_str();
 
   Player player(configuration);
 
