@@ -3,12 +3,6 @@
 #include <thread>
 #include <vector>
 
-struct PlayerConfiguration {
-  int textureWidth;
-  int textureHeight;
-  int textureChannels;
-};
-
 struct PlayerInternal;
 
 class Player {

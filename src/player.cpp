@@ -22,6 +22,26 @@ using namespace std;
 // Dummy utility functions
 
 // clang-format off
+
+static const char* video_vs = "\
+#version 330 core\n\
+in vec2 pos;\n\
+out vec2 fs_pos;\n\
+void main() {\n\
+  fs_pos = pos;\n\
+  gl_Position = vec4(pos.x, pos.y, 0, 1);\n\
+}\n\
+" ;
+static const char* video_fs = "\
+#version 330 core\n\
+out vec3 color;\n\
+uniform sampler2D tex;\n\
+in vec2 fs_pos;\n\
+void main() {\n\
+  color = texture(tex, fs_pos * 0.5 + 0.5).xyz; \n\
+}\
+";
+
 const static float screenMesh[] = {
   -1, -1,
   -1, 1,
@@ -33,21 +53,10 @@ const static float screenMesh[] = {
 };
 // clang-format on
 
-string readFile(const char *path) {
-  ifstream ifs(path);
-  ifs.open(path);
-  stringstream strStream;
-  strStream << ifs.rdbuf();
-  LOG("-> File read %s\n", path);
-  return strStream.str();
-}
-
 // OpenGL boilerplate
-GLuint compileShader(const char *path, GLenum type) {
-  string data = readFile(path);
+GLuint compileShader(const char *content, GLenum type) {
   GLuint shader = glCreateShader(type);
-  const char *content = data.c_str();
-  int len = data.size();
+  int len = strlen(content);
   glShaderSource(shader, 1, &content, &len);
   glCompileShader(shader);
   int InfoLogLength;
@@ -64,7 +73,7 @@ GLuint compileShader(const char *path, GLenum type) {
     return -1;
   } else {
 
-    LOG("-> Shader compiled %s\n", path);
+    // LOG("-> Shader compiled %s\n", path);
   }
   return shader;
 }
@@ -126,7 +135,7 @@ public:
     // Create window
     glfwInit();
 
-    window = glfwCreateWindow(640, 480, "Player", nullptr, nullptr);
+    window = glfwCreateWindow(960, 540, "Player", nullptr, nullptr);
     glfwMakeContextCurrent(window);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glewInit();
@@ -134,8 +143,8 @@ public:
     LOG("-> Window created\n");
 
     // Opengl setup
-    program = compileProgram({compileShader("video.fs", GL_FRAGMENT_SHADER),
-                              compileShader("video.vs", GL_VERTEX_SHADER)});
+    program = compileProgram({compileShader(video_fs, GL_FRAGMENT_SHADER),
+                              compileShader(video_vs, GL_VERTEX_SHADER)});
 
     vbo = uploadBuffer((void *)screenMesh, sizeof(screenMesh));
 
@@ -166,42 +175,6 @@ void Player::uploadFrame(char *data, int width, int height, int ch) {
 
 Player::Player() : internal(std::make_unique<PlayerInternal>()) {}
 
-#ifdef CLIENT
-int main() {
-
-  Player player;
-  LOG("-> Awaiting input...\n");
-  PlayerConfiguration configuration;
-  read(0, &configuration, sizeof(configuration));
-
-  vector<unsigned char> frame(configuration.textureWidth *
-                              configuration.textureHeight *
-                              configuration.textureChannels);
-
-  bool reachEnd = false;
-  while (!player.shouldClose()) {
-
-    if (!reachEnd) {
-      int status = readall(0, frame.data(), frame.size());
-      if (status == 0) {
-        LOG("EOF\n");
-        reachEnd = true;
-      } else if (status != frame.size()) {
-        LOG("Bad frame\n");
-        break;
-      } else {
-        player.uploadFrame((char *)frame.data(), configuration.textureWidth,
-                           configuration.textureHeight,
-                           configuration.textureChannels);
-      }
-    }
-    player.drawFrame();
-  }
-}
-#endif
-
-#include <iostream>
-#include <thread>
 char *Player::launch(int width, int height, int ch) {
   static std::vector<char> data(width * height * ch);
   char *scr = data.data();

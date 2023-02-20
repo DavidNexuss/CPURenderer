@@ -40,3 +40,16 @@ inline int readall(int fd, void *data, int size) {
 }
 
 #undef S
+
+#include <fstream>
+#include <sstream>
+#include <string>
+using namespace std;
+inline string readFile(const char *path) {
+  ifstream ifs(path);
+  ifs.open(path);
+  stringstream strStream;
+  strStream << ifs.rdbuf();
+  LOG("-> File read %s\n", path);
+  return strStream.str();
+}
