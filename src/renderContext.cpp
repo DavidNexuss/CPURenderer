@@ -1,12 +1,12 @@
 #include "renderContext.hpp"
 #include "font_data.hpp"
 #include <thread>
-void RenderContext::clear() {
+void RenderContext::clear() const {
   for (int i = 0; i < scr.count(); i++)
     scr.native()[i] = {0, 0, 0};
 }
 
-void RenderContext::writeChar(int ch, int x, int y) {
+void RenderContext::writeChar(int ch, int x, int y) const {
   for (int i = 0; i < 8; i++) {
     int yy = y + 8 - i;
     for (int w = 0; w < 8; w++) {
@@ -22,7 +22,7 @@ void RenderContext::writeChar(int ch, int x, int y) {
   }
 }
 
-void RenderContext::drawBox(int x, int y, int width, int height, int c) {
+void RenderContext::drawBox(int x, int y, int width, int height, int c) const {
 
   color f{u(brushColor[0] / c), u(brushColor[1] / c), u(brushColor[2] / c)};
 
@@ -57,7 +57,7 @@ void RenderContext::drawBox(int x, int y, int width, int height, int c) {
   }
 }
 
-void RenderContext::fillBox(int x, int y, int width, int height) {
+void RenderContext::fillBox(int x, int y, int width, int height) const {
   for (int i = 0; i < width; i++) {
     for (int j = 0; j < height; j++) {
       scr[i + x][j + y] = brushColor;
@@ -65,7 +65,7 @@ void RenderContext::fillBox(int x, int y, int width, int height) {
   }
 }
 
-void RenderContext::writeStr(int x, int y, const char *str) {
+void RenderContext::writeStr(int x, int y, const char *str) const {
 
   char ch;
   int originalX = x;
@@ -76,10 +76,10 @@ void RenderContext::writeStr(int x, int y, const char *str) {
       if (y < 0)
         break;
 
-      continue;
+    } else {
+      writeChar(ch, x, y);
+      x += 8;
     }
-    writeChar(ch, x, y);
-    x += 8;
     str++;
   }
 }

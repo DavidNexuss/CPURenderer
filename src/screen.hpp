@@ -11,7 +11,7 @@ class Screen {
     int width;
 
   public:
-    inline color &operator[](int y) { return scr[y * width + x]; }
+    inline color &operator[](int y) const { return scr[y * width + x]; }
   };
 
 protected:
@@ -20,9 +20,9 @@ protected:
   color *scr;
 
 public:
-  inline ScreenProxy operator[](int x) { return {scr, x, width}; }
-  inline color *native() { return scr; }
-  inline int count() { return width * height; }
+  inline ScreenProxy operator[](int x) const { return {scr, x, width}; }
+  inline color *native() const { return scr; }
+  inline int count() const { return width * height; }
 };
 
 template <typename T> color Color(T a, T b, T c) { return {u(a), u(b), u(c)}; }

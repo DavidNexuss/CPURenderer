@@ -19,14 +19,14 @@ public:
     writeCharDelay = delay;
   }
 
-  void clear();
-  void writeChar(int ch, int x, int y);
-  void drawBox(int x, int y, int width, int height, int c);
-  void fillBox(int x, int y, int width, int height);
+  void clear() const;
+  void writeChar(int ch, int x, int y) const;
+  void drawBox(int x, int y, int width, int height, int c) const;
+  void fillBox(int x, int y, int width, int height) const;
 
-  void writeStr(int x, int y, const char *);
+  void writeStr(int x, int y, const char *) const;
 
-  template <typename... Args> void printf(int x, int y, Args &&...args) {
+  template <typename... Args> void printf(int x, int y, Args &&...args) const {
     static std::vector<char> buffer(4096);
 
     int bufferSize = sprintf(buffer.data(), std::forward<Args>(args)...);
