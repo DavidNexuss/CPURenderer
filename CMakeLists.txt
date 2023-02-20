@@ -14,3 +14,8 @@ target_link_libraries(client drawLib GL GLEW)
 add_executable(demo examples/demo.cpp)
 target_include_directories(demo PUBLIC src)
 target_link_libraries(demo drawLib GL GLEW)
+
+
+add_executable(demo2 examples/demo2.cpp)
+target_include_directories(demo2 PUBLIC src)
+target_link_libraries(demo2 drawLib GL GLEW)

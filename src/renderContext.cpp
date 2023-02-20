@@ -1,6 +1,6 @@
 #include "renderContext.hpp"
 #include "font_data.hpp"
-
+#include <thread>
 void RenderContext::clear() {
   for (int i = 0; i < scr.count(); i++)
     scr.native()[i] = {0, 0, 0};
@@ -15,6 +15,10 @@ void RenderContext::writeChar(int ch, int x, int y) {
       scr[xx][yy] = {u(val * brushColor[0]), u(val * brushColor[1]),
                      u(val * brushColor[2])};
     }
+  }
+
+  if (writeCharDelay != std::chrono::milliseconds::zero()) {
+    std::this_thread::sleep_for(writeCharDelay);
   }
 }
 

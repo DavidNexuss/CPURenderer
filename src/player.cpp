@@ -54,7 +54,9 @@ const static float screenMesh[] = {
 // clang-format on
 
 // OpenGL boilerplate
-GLuint compileShader(const char *content, GLenum type) {
+
+// Compiles a shader
+static GLuint compileShader(const char *content, GLenum type) {
   GLuint shader = glCreateShader(type);
   int len = strlen(content);
   glShaderSource(shader, 1, &content, &len);
@@ -78,7 +80,8 @@ GLuint compileShader(const char *content, GLenum type) {
   return shader;
 }
 
-GLuint compileProgram(const std::vector<GLuint> &shaders) {
+// Compiles a program
+static GLuint compileProgram(const std::vector<GLuint> &shaders) {
   GLuint program = glCreateProgram();
   for (auto sha : shaders) {
 
@@ -93,20 +96,17 @@ GLuint compileProgram(const std::vector<GLuint> &shaders) {
   return program;
 }
 
-GLuint uploadBuffer(void *data, int count) {
+// Uploads a buffer
+static GLuint uploadBuffer(void *data, int count) {
   GLuint buffer;
   glGenBuffers(1, &buffer);
   glBindBuffer(GL_ARRAY_BUFFER, buffer);
   glBufferData(GL_ARRAY_BUFFER, count, data, GL_STATIC_DRAW);
   return buffer;
 }
-void window_size_callback(GLFWwindow *window, int width, int height) {
-  glViewport(0, 0, width, height);
-}
 
-GLuint uploadTexture(int width, int height, int channels, void *data) {
-  static GLuint texture = -1;
-
+static GLuint uploadTexture(int width, int height, int channels, bool isHDR,
+                            void *data, GLuint texture) {
   if (texture == -1) {
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
@@ -123,19 +123,27 @@ GLuint uploadTexture(int width, int height, int channels, void *data) {
   return texture;
 }
 
+/**
+ * GLFW window callbacks
+ */
+static void window_size_callback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
 struct PlayerInternal {
 
   GLFWwindow *window;
   GLuint vbo;
   GLuint program;
   GLuint playerTexture;
+  GLuint texture;
 
 public:
-  PlayerInternal() {
+  PlayerInternal(const char *title) {
     // Create window
     glfwInit();
 
-    window = glfwCreateWindow(960, 540, "Player", nullptr, nullptr);
+    window = glfwCreateWindow(960, 540, title, nullptr, nullptr);
     glfwMakeContextCurrent(window);
     glfwSetWindowSizeCallback(window, window_size_callback);
     glewInit();
@@ -152,6 +160,9 @@ public:
     glUseProgram(program);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void *)0);
+
+    // Textures setup
+    playerTexture = -1;
   }
 
   void drawFrame() {
@@ -160,8 +171,8 @@ public:
     glfwSwapBuffers(window);
   }
 
-  void uploadFrame(char *data, int width, int height, int ch) {
-    playerTexture = uploadTexture(width, height, ch, data);
+  void uploadFrame(char *data, int width, int height, int ch, bool HDR) {
+    playerTexture = uploadTexture(width, height, ch, HDR, data, playerTexture);
   }
 
   bool shouldClose() { return glfwWindowShouldClose(window); }
@@ -170,14 +181,19 @@ public:
 bool Player::shouldClose() { return internal->shouldClose(); }
 void Player::drawFrame() { internal->drawFrame(); }
 void Player::uploadFrame(char *data) {
-  internal->uploadFrame(data, width, height, ch);
+  if (data == nullptr)
+    data = configuration.defaultFrameData;
+
+  internal->uploadFrame(data, configuration.width, configuration.height,
+                        configuration.channels, configuration.isHDR);
 }
 
-Player::Player(int width, int height, int channels)
-    : internal(std::make_unique<PlayerInternal>()) {
-  this->width = width;
-  this->height = height;
-  this->ch = channels;
+Player::Player(PlayerConfiguration configuration)
+    : internal(std::make_unique<PlayerInternal>("Player")) {
+  this->configuration = configuration;
+  Screen::width = configuration.width;
+  Screen::height = configuration.height;
+  Screen::scr = (color *)configuration.defaultFrameData;
 }
 
 void Player::launch(char **scr) {

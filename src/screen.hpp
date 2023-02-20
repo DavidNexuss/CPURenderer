@@ -1,5 +1,4 @@
 #pragma once
-#include "player.hpp"
 #include <array>
 using color = std::array<unsigned char, 3>;
 using u = unsigned char;
@@ -15,11 +14,12 @@ class Screen {
     inline color &operator[](int y) { return scr[y * width + x]; }
   };
 
-public:
+protected:
   int width;
   int height;
   color *scr;
 
+public:
   inline ScreenProxy operator[](int x) { return {scr, x, width}; }
   inline color *native() { return scr; }
   inline int count() { return width * height; }

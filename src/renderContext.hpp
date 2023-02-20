@@ -1,11 +1,23 @@
 #pragma once
 #include "screen.hpp"
+#include <chrono>
 #include <cstdio>
+#include <vector>
 
 class RenderContext {
-public:
+
   Screen scr;
   color brushColor;
+  std::chrono::milliseconds writeCharDelay;
+
+public:
+  RenderContext() {}
+  RenderContext(Screen _scr) : scr(_scr) {}
+
+  inline void setBrushColor(color col) { brushColor = col; }
+  inline void setWriteCharDelay(std::chrono::milliseconds delay) {
+    writeCharDelay = delay;
+  }
 
   void clear();
   void writeChar(int ch, int x, int y);

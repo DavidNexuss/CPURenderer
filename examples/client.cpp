@@ -6,23 +6,14 @@
 
 using namespace std;
 
-struct PlayerConfiguration {
-  int textureWidth;
-  int textureHeight;
-  int textureChannels;
-};
-
 int main() {
 
   LOG("-> Awaiting input...\n");
   PlayerConfiguration configuration;
   read(0, &configuration, sizeof(configuration));
-  Player player(configuration.textureWidth, configuration.textureHeight,
-                configuration.textureChannels);
-
-  vector<unsigned char> frame(configuration.textureWidth *
-                              configuration.textureHeight *
-                              configuration.textureChannels);
+  Player player(configuration);
+  vector<unsigned char> frame(configuration.width * configuration.height *
+                              configuration.channels);
 
   bool reachEnd = false;
   while (!player.shouldClose()) {
