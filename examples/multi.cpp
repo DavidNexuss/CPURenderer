@@ -29,21 +29,19 @@ int main() {
   configuration.defaultFrameData = (char *)screenB.native();
   Player b(configuration);
 
+  a.launch();
+  b.launch();
+
   int i = 0;
   while (!a.shouldClose()) {
 
-    for (int fs = 0; fs < 800; fs++) {
+    for (int fs = 0; fs < 20; fs++) {
       screenA.native()[i] = {u(i / width), u(i % width), u(i % (width))};
       screenB.native()[i] = {u(i % width), u(i / width), u(i % (width))};
       i++;
       i %= screenA.count();
     }
 
-    b.uploadFrame();
-    b.drawFrame();
-    a.uploadFrame();
-    a.drawFrame();
-
-    std::this_thread::sleep_for(10ms);
+    std::this_thread::sleep_for(20us);
   }
 }
