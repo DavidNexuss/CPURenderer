@@ -19,6 +19,8 @@ struct RenderPlayer : public ScreenBuffer, public Player {
   Screen toScreen() { return *(ScreenBuffer *)this; }
 };
 
+std::string text;
+
 void testInput(RenderPlayer &player) {
   RenderContext ctx(player.toScreen());
 
@@ -30,16 +32,19 @@ void testInput(RenderPlayer &player) {
 
   ctx.clear();
   for (int i = GLFW_KEY_A; i <= top; i++) {
-    ctx.setBrushColor(
-        brushColor[player.isKeyPressed(i) + player.isKeyJustPressed(i)]);
-    ctx.printf(20, 10 + 10 * (i - GLFW_KEY_A), "Tecla %c tecleada", char(i));
+    int index = player.isKeyPressed(i) + player.isKeyJustPressed(i);
+    ctx.setBrushColor(brushColor[index]);
+    ctx.printf(10, 10 + 10 * (i - GLFW_KEY_A), "Tecla %c tecleada", char(i));
+    if (index == 2) {
+      text += char(i);
+    }
   }
 
   ctx.setBrushColor({255, 255, 255});
-  ctx.printf(200, 100, "Posicion del cursor: %d %d", player.getX(),
-             player.getY());
-  ctx.printf(200, 110, "Tamanyo de la ventana: %d %d", player.getWindowWidth(),
+  ctx.printf(200, 100, "cursor: %d %d", player.getX(), player.getY());
+  ctx.printf(200, 110, "ventana: %d %d", player.getWindowWidth(),
              player.getWindowHeight());
+  ctx.writeStr(150, player.toScreen().getScreenHeight() - 20, text.c_str());
 
   player.uploadFrame();
   player.drawFrame();
