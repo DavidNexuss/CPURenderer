@@ -23,3 +23,13 @@ basic needs (render a box, render text...)
 
 
 Example code in examples folder.
+
+## Build instructions
+
+This is a cmake project so:
+
+``` bash
+cmake . -B build
+cd build
+make
+```
