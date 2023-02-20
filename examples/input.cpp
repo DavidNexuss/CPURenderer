@@ -1,3 +1,4 @@
+#include "imgui.h"
 #include <future>
 #include <player.hpp>
 #include <renderContext.hpp>
@@ -32,7 +33,14 @@ void testInput(RenderPlayer &player) {
   ctx.writeStr(150, player.getScreenHeight() - 20, text.c_str());
 
   player.uploadFrame();
-  player.drawFrame();
+  player.drawFrame(true);
+  player.beginImgui();
+
+  if (ImGui::Begin("Some window")) {
+    ImGui::End();
+  }
+  player.endImgui();
+  player.swapBuffers();
 }
 
 int main() {

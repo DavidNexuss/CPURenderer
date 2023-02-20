@@ -59,5 +59,5 @@ bool InputManager::isKeyJustPressed(int key) {
 }
 bool InputManager::isKeyPressed(int key) { return m_keyPresses[key] > 0; }
 
-double InputManager::getX() { return m_x; }
-double InputManager::getY() { return m_y; }
+double InputManager::getX() { return m_x / double(m_width); }
+double InputManager::getY() { return 1.0 - (m_y / double(m_height)); }

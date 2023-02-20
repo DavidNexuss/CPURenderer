@@ -44,7 +44,7 @@ public:
   /**
    * Draws the current frame to the screen.
    */
-  void drawFrame();
+  void drawFrame(bool hold = false);
 
   /**
    * Uploads new data to the GPU. If src is null, defaultFrameData will be used

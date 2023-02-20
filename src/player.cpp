@@ -46,7 +46,7 @@ Player::Player(PlayerConfiguration configuration)
   playerTexture = -1;
 }
 
-void Player::drawFrame() {
+void Player::drawFrame(bool hold) {
   makeContextCurrent();
   if (shouldDraw()) {
     if (signalViewportUpdate()) {
@@ -55,7 +55,8 @@ void Player::drawFrame() {
     }
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glfwPollEvents();
-    swapBuffers();
+    if (!hold)
+      swapBuffers();
   }
 }
 

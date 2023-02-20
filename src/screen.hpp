@@ -5,13 +5,20 @@ using u = unsigned char;
 
 class Screen {
 
+  inline static color crap;
   struct ScreenProxy {
     color *scr;
     int x;
     int width;
+    int top;
 
   public:
-    inline color &operator[](int y) const { return scr[y * width + x]; }
+    inline color &operator[](int y) const {
+      int index = y * width + x;
+      if (index < 0 || index >= top)
+        return crap;
+      return scr[y * width + x];
+    }
   };
 
 protected:
@@ -20,7 +27,9 @@ protected:
   color *scr;
 
 public:
-  inline ScreenProxy operator[](int x) const { return {scr, x, width}; }
+  inline ScreenProxy operator[](int x) const {
+    return {scr, x, width, width * height};
+  }
   inline color *native() const { return scr; }
   inline int count() const { return width * height; }
 
