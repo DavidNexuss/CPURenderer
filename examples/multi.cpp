@@ -21,8 +21,8 @@ int main() {
   ScreenBuffer screenB(width, height);
 
   PlayerConfiguration configuration;
-  configuration.width = screenA.getWidth();
-  configuration.height = screenA.getHeight();
+  configuration.width = screenA.getScreenWidth();
+  configuration.height = screenA.getScreenHeight();
   configuration.defaultFrameData = (char *)screenA.native();
 
   Player a(configuration);

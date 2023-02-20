@@ -41,7 +41,8 @@ void Player::drawFrame() {
   makeContextCurrent();
   if (shouldDraw()) {
     if (signalViewportUpdate()) {
-      glViewport(0, 0, InputManager::getWidth(), InputManager::getHeight());
+      glViewport(0, 0, InputManager::getWindowWidth(),
+                 InputManager::getWindowHeight());
     }
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glfwPollEvents();

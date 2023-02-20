@@ -29,8 +29,8 @@ public:
   double getX();
   double getY();
 
-  int getWidth();
-  int getHeight();
+  int getWindowWidth();
+  int getWindowHeight();
 
   bool isMouseClicked();
 

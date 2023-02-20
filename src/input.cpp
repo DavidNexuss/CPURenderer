@@ -50,5 +50,5 @@ bool InputManager::signalViewportUpdate() {
   return current;
 }
 
-int InputManager::getWidth() { return m_width; }
-int InputManager::getHeight() { return m_height; }
+int InputManager::getWindowWidth() { return m_width; }
+int InputManager::getWindowHeight() { return m_height; }
