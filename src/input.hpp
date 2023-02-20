@@ -3,7 +3,7 @@
 #include <unordered_map>
 
 class InputManager {
-  std::unordered_map<char, int> m_keyPresses;
+  std::unordered_map<int, int> m_keyPresses;
   double m_x;
   double m_y;
   int m_width;
@@ -23,8 +23,8 @@ class InputManager {
 public:
   InputManager(GLFWwindow *window);
 
-  bool isKeyPressed(char key);
-  bool isKeyJustPressed(char key);
+  bool isKeyPressed(int key);
+  bool isKeyJustPressed(int key);
 
   double getX();
   double getY();

@@ -53,5 +53,5 @@ public:
   /**
    * Launches an async thread to constantly update the contents of the texture.
    */
-  void launch(char **scr);
+  void launch(char **scr = nullptr);
 };

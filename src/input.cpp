@@ -52,3 +52,9 @@ bool InputManager::signalViewportUpdate() {
 
 int InputManager::getWindowWidth() { return m_width; }
 int InputManager::getWindowHeight() { return m_height; }
+
+bool InputManager::isKeyJustPressed(int key) { return m_keyPresses[key] == 1; }
+bool InputManager::isKeyPressed(int key) { return m_keyPresses[key] > 0; }
+
+double InputManager::getX() { return m_x; }
+double InputManager::getY() { return m_y; }

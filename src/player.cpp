@@ -62,6 +62,9 @@ void Player::uploadFrame(char *data) {
 }
 
 void Player::launch(char **scr) {
+  if (scr == nullptr) {
+    scr = &configuration.defaultFrameData;
+  }
   glfwMakeContextCurrent(nullptr);
   renderThread = std::thread([=]() {
     LOG("-> Rendering thread launched\n");

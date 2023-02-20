@@ -4,15 +4,6 @@
 #include <vector>
 using namespace std;
 
-struct ScreenBuffer : public Screen {
-  std::vector<color> buffer;
-  ScreenBuffer(int width, int height) : buffer(width * height) {
-    Screen::width = width;
-    Screen::height = height;
-    Screen::scr = buffer.data();
-  }
-};
-
 int main() {
   int width = 1920 / 2;
   int height = 1920 / 2;

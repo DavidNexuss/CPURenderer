@@ -32,3 +32,13 @@ template <typename T> color Color(T a, T b, T c) { return {u(a), u(b), u(c)}; }
 static color mul(color a, color b) {
   return Color(a[0] * b[0], a[1] * b[1], a[2] * b[2]);
 }
+
+#include <vector>
+struct ScreenBuffer : public Screen {
+  std::vector<color> buffer;
+  ScreenBuffer(int width, int height) : buffer(width * height) {
+    Screen::width = width;
+    Screen::height = height;
+    Screen::scr = buffer.data();
+  }
+};
