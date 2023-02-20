@@ -36,7 +36,7 @@ int main() {
 
   RenderContext ctx(player);
   ctx.setBrushColor({255, 100, 100});
-  ctx.setWriteCharDelay(1ms);
+  ctx.setWriteCharDelay(5ms);
 
   RenderContext a = ctx;
   RenderContext b = ctx;

@@ -50,6 +50,7 @@ void Player::drawFrame() {
 }
 
 void Player::uploadFrame(char *data) {
+  makeContextCurrent();
   if (data == nullptr) {
     data = configuration.defaultFrameData;
   }
