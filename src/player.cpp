@@ -11,14 +11,12 @@
 
 using namespace std;
 
-Player::Player(PlayerConfiguration configuration)
-    : Window(configuration.width, configuration.height, "Player") {
+Player::Player(TextureFormat format, PlayerConfiguration configuration)
+    : Window(format.width, format.height, "Player") {
 
   // Screen configuration
   this->configuration = configuration;
-  Screen::width = configuration.width;
-  Screen::height = configuration.height;
-  Screen::scr = (color *)configuration.defaultFrameData;
+  this->format = format;
 
   // Create window
   LOG("-> Window created\n");
@@ -65,9 +63,9 @@ void Player::uploadFrame(char *data) {
     data = configuration.defaultFrameData;
   }
 
-  playerTexture = gl::uploadTexture(configuration.width, configuration.height,
-                                    configuration.channels, configuration.isHDR,
-                                    data, playerTexture);
+  playerTexture =
+      gl::uploadTexture(format.width, format.height, format.channels,
+                        format.channelsSize, data, playerTexture);
 }
 
 void Player::launch(char **scr) {
@@ -84,17 +82,4 @@ void Player::launch(char **scr) {
     }
     LOG("-> Window closed, rendering thread stopped\n");
   });
-}
-
-PlayerConfiguration RenderPlayer::configure(int width, int height) {
-  PlayerConfiguration configuration;
-  configuration.width = width;
-  configuration.height = height;
-  return configuration;
-}
-
-RenderPlayer::RenderPlayer(int width, int height)
-    : Player(configure(width, height)), screenBuffer(width * height) {
-  Screen::scr = screenBuffer.data();
-  configuration.defaultFrameData = (char *)screenBuffer.data();
 }

@@ -6,18 +6,18 @@
 
 class RenderContext {
 
-  Screen scr;
-  color brushColor{255, 255, 255};
+  RGBScreen scr;
+  rgb brushColor{255, 255, 255};
   std::chrono::milliseconds writeCharDelay = std::chrono::milliseconds::zero();
 
 public:
   RenderContext() {}
-  RenderContext(Screen _scr) : scr(_scr) {}
+  RenderContext(RGBScreen _scr) : scr(_scr) {}
 
   /**
    * Sets the active brushColor everything is rendered using brushColor
    */
-  inline void setBrushColor(color col) { brushColor = col; }
+  inline void setBrushColor(rgb col) { brushColor = col; }
 
   /**
    * Sets a delay between each writeChar invokation, useful for animations
@@ -66,10 +66,6 @@ public:
    */
   template <typename... Args> void printf(int x, int y, Args &&...args) const {
     static std::vector<char> buffer(4096);
-
-    int bufferSize = sprintf(buffer.data(), std::forward<Args>(args)...);
-    int originalX = x;
-
     writeStr(x, y, buffer.data());
   }
 };

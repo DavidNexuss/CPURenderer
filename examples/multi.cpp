@@ -8,8 +8,8 @@ int main() {
   int width = 1920 / 2;
   int height = 1920 / 2;
 
-  RenderPlayer a(width, height);
-  RenderPlayer b(width, height);
+  RGBRenderPlayer a(width, height);
+  RGBRenderPlayer b(width, height);
 
   a.launch();
   b.launch();
@@ -18,8 +18,8 @@ int main() {
   while (!a.shouldClose()) {
 
     for (int fs = 0; fs < 20; fs++) {
-      a.native()[i] = {u(i / width), u(i % width), u(i % (width))};
-      b.native()[i] = {u(i % width), u(i / width), u(i % (width))};
+      a.native()[i] = {i / width, i % width, i % (width)};
+      b.native()[i] = {i % width, i / width, i % (width)};
       i++;
       i %= b.count();
     }

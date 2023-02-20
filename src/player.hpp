@@ -1,30 +1,19 @@
 #pragma once
 #include "gl.hpp"
 #include "screen.hpp"
+#include "texture.hpp"
 #include "window.hpp"
 #include <thread>
 #include <vector>
 
-struct PlayerInternal;
-
 struct PlayerConfiguration {
-
-  /* Texture configuration */
-  int width = 640;
-  int height = 480;
-  int channels = 3;
-  bool isHDR = false;
-
-  /* Shader content for overriding in player*/
   const char *fragmentShaderOverride = nullptr;
   const char *vertexShaderOverride = nullptr;
-
   const char *titleOverride = nullptr;
-
   char *defaultFrameData = nullptr;
 };
 
-class Player : public Screen, public Window {
+class Player : public Window {
   std::thread renderThread;
 
   GLuint vbo;
@@ -34,12 +23,14 @@ class Player : public Screen, public Window {
 
 protected:
   PlayerConfiguration configuration;
+  TextureFormat format;
 
 public:
   /**
    * Creates a player with width, height and channels option.
    */
-  Player(PlayerConfiguration configuration);
+  Player(TextureFormat format,
+         PlayerConfiguration configuration = PlayerConfiguration());
 
   /**
    * Draws the current frame to the screen.
@@ -56,13 +47,27 @@ public:
    * Launches an async thread to constantly update the contents of the texture.
    */
   void launch(char **scr = nullptr);
+
+  inline int getScreenWidth() { return format.width; }
+  inline int getScreenHeight() { return format.height; }
 };
 
-class RenderPlayer : public Player {
-  static PlayerConfiguration configure(int width, int height);
-
-  std::vector<color> screenBuffer;
+template <typename T, int channels>
+class RenderPlayer : public Screen<T, channels>, public Player {
+  std::vector<vec<T, channels>> texture;
 
 public:
-  RenderPlayer(int width, int height);
+  RenderPlayer(int width, int height)
+      : Screen<T, channels>(), Player(TextureFormat(width, height)),
+        texture(width * height) {
+
+    this->width = width;
+    this->height = height;
+    this->source = texture.data();
+    this->channels = channels;
+    this->channelsSize = sizeof(channels);
+    this->format = *this;
+  }
 };
+
+using RGBRenderPlayer = RenderPlayer<unsigned char, 3>;

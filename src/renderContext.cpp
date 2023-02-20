@@ -1,6 +1,8 @@
 #include "renderContext.hpp"
 #include "font_data.hpp"
 #include <thread>
+using u = unsigned char;
+
 void RenderContext::clear() const {
   for (int i = 0; i < scr.count(); i++)
     scr.native()[i] = {0, 0, 0};
@@ -12,8 +14,8 @@ void RenderContext::writeChar(int ch, int x, int y) const {
     for (int w = 0; w < 8; w++) {
       int xx = x + w;
       u val = ((font8x8_basic[ch][i] >> w) & 1);
-      scr[xx][yy] = {u(val * brushColor[0]), u(val * brushColor[1]),
-                     u(val * brushColor[2])};
+      rgb col = rgb{val, val, val};
+      scr[xx][yy] = brushColor * col;
     }
   }
 
@@ -24,11 +26,11 @@ void RenderContext::writeChar(int ch, int x, int y) const {
 
 void RenderContext::drawBox(int x, int y, int width, int height, int c) const {
 
-  color f{u(brushColor[0] / c), u(brushColor[1] / c), u(brushColor[2] / c)};
+  rgb f{u(brushColor[0] / c), u(brushColor[1] / c), u(brushColor[2] / c)};
 
   for (int i = x; i < (width + x); i++) {
     for (int w = 0; w < c; w++) {
-      color col = mul(Color(w, w, w), f);
+      rgb col = f * rgb(w);
 
       scr[i][y + w] = col;
       scr[i][y + height - w] = col;
@@ -37,7 +39,7 @@ void RenderContext::drawBox(int x, int y, int width, int height, int c) const {
 
   for (int i = y; i < (height + y); i++) {
     for (int w = 0; w < c; w++) {
-      color col = mul(Color(w, w, w), f);
+      rgb col = f * rgb(w);
 
       scr[x + w][i] = col;
       scr[x + width - w][i] = col;
@@ -47,7 +49,7 @@ void RenderContext::drawBox(int x, int y, int width, int height, int c) const {
   for (int i = 0; i < c; i++) {
     for (int j = 0; j < c; j++) {
       int w = c - std::max(c - i, c - j);
-      color re = mul(Color(w, w, w), f);
+      rgb re = f * rgb(w);
 
       scr[x + i][y + j] = re;
       scr[x + width - i][y + j] = re;

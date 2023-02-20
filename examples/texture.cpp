@@ -11,15 +11,15 @@ int mrand(void) {
 }
 
 int main() {
-  RenderPlayer player(920 + 40, 764 + 40);
+  RenderPlayer<unsigned char, 3> player(920 + 40, 764 + 40);
   RenderContext ctx(player);
 
   ctx.writeTexture(20, 20, "../assets/sample.png");
 
   auto t = std::thread([&]() {
     while (true) {
-      int x = (mrand() % (player.getScreenWidth() - 2)) + 1;
-      int y = (mrand() % (player.getScreenHeight() - 2)) + 1;
+      int x = (mrand() % (player.width - 2)) + 1;
+      int y = (mrand() % (player.height - 2)) + 1;
 
       int px = (mrand() % 3) - 1;
       int py = (mrand() % 3) - 1;

@@ -6,16 +6,14 @@
 int main() {
   int width = 1920 / 2;
   int height = 1080 / 2;
-  ScreenBuffer screen(width, height);
-  ScreenBuffer backbuffer(width, height);
+  RGBScreenBuffer screen(width, height);
+  RGBScreenBuffer backbuffer(width, height);
 
   PlayerConfiguration configuration;
-  configuration.width = width;
-  configuration.height = height;
   string fs = readFile("../assets/glow.frag");
   configuration.fragmentShaderOverride = fs.c_str();
 
-  Player player(configuration);
+  Player player(screen, configuration);
 
   int li = 10;
   int up = 0;
@@ -68,9 +66,8 @@ setup:
       }
     }
 
-    ctx.printf(20, player.getScreenHeight() - 20, "%d %d %d", Salive, SdeadDown,
-               SdeadUp);
-    ctx.writeStr(20, player.getScreenHeight() - 40,
+    ctx.printf(20, screen.height - 20, "%d %d %d", Salive, SdeadDown, SdeadUp);
+    ctx.writeStr(20, screen.height - 40,
                  "Use keys Q-A W-S E-D for changing life rules");
     screen = backbuffer;
     player.uploadFrame((char *)screen.native());

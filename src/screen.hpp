@@ -1,33 +1,30 @@
 #pragma once
-#include <array>
-using color = std::array<unsigned char, 3>;
-using u = unsigned char;
+#include "color.hpp"
+#include "texture.hpp"
+#include <vector>
 
-class Screen {
+template <typename B, int channelCount> class Screen : public TextureFormat {
 
+public:
+  using Texel = vec<B, channelCount>;
+
+private:
   struct ScreenProxy {
-    color *scr;
+    Texel *scr;
     int x;
     int width;
 
   public:
-    inline color &operator[](int y) const { return scr[y * width + x]; }
+    Texel &operator[](int y) const { return scr[y * width + x]; }
   };
 
-protected:
-  int width;
-  int height;
-  color *scr;
-
 public:
-  inline ScreenProxy operator[](int x) const { return {scr, x, width}; }
-  inline color *native() const { return scr; }
-  inline int count() const { return width * height; }
+  ScreenProxy operator[](int x) const { return {(Texel *)source, x, width}; }
 
-  inline int getScreenWidth() const { return width; }
-  inline int getScreenHeight() const { return height; }
+  Texel *native() const { return (Texel *)source; }
+  int count() const { return width * height; }
 
-  Screen(int width, int height, color *_scr) {
+  Screen(int width, int height, Texel *_scr) {
     this->width = width;
     this->height = height;
     this->scr = _scr;
@@ -36,24 +33,22 @@ public:
   Screen() {}
 };
 
-template <typename T> color Color(T a, T b, T c) { return {u(a), u(b), u(c)}; }
-static color mul(color a, color b) {
-  return Color(a[0] * b[0], a[1] * b[1], a[2] * b[2]);
-}
+template <typename B, int channelCount>
+struct ScreenBuffer : public Screen<B, channelCount> {
+  std::vector<typename Screen<B, channelCount>::Texel> buffer;
 
-#include <vector>
-struct ScreenBuffer : public Screen {
-  std::vector<color> buffer;
   ScreenBuffer(int width, int height) : buffer(width * height) {
-    Screen::width = width;
-    Screen::height = height;
-    Screen::scr = buffer.data();
+    this->width = width;
+    this->height = height;
+    this->source = buffer.data();
   }
 
   ScreenBuffer(const ScreenBuffer &other) {
     buffer = other.buffer;
-    Screen::scr = buffer.data();
-    Screen::width = other.width;
-    Screen::height = other.height;
+    this->width = other.width;
+    this->height = other.height;
+    this->source = buffer.data();
   }
 };
+using RGBScreen = Screen<unsigned char, 3>;
+using RGBScreenBuffer = ScreenBuffer<unsigned char, 3>;

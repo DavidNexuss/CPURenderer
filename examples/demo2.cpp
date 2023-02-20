@@ -23,16 +23,8 @@ int main() {
   int width = 1920;
   int height = 1080;
 
-  vector<color> screen(width * height);
-  PlayerConfiguration configuration;
-  configuration.width = width;
-  configuration.height = height;
-  configuration.channels = 3;
-  configuration.defaultFrameData = (char *)screen.data();
-
-  Player player(configuration);
-  char *data = (char *)screen.data();
-  player.launch(&data);
+  RGBRenderPlayer player(width, height);
+  player.launch();
 
   RenderContext ctx(player);
   ctx.setBrushColor({255, 100, 100});

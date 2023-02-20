@@ -6,10 +6,10 @@ using namespace std;
 
 std::string text;
 
-void testInput(RenderPlayer &player) {
+void testInput(RGBRenderPlayer &player) {
   RenderContext ctx(player);
 
-  color brushColor[] = {{255, 100, 100}, {100, 255, 100}, {100, 255, 255}};
+  rgb brushColor[] = {{255, 100, 100}, {100, 255, 100}, {100, 255, 255}};
 
   int top =
       std::min((player.getScreenHeight() - 10) / 10, GLFW_KEY_Z - GLFW_KEY_A) +
@@ -36,8 +36,8 @@ void testInput(RenderPlayer &player) {
 }
 
 int main() {
-  RenderPlayer pa(1920 / 2, 1080 / 2);
-  RenderPlayer pb(1920 / 2, 1080 / 2);
+  RGBRenderPlayer pa(1920 / 2, 1080 / 2);
+  RGBRenderPlayer pb(1920 / 2, 1080 / 2);
 
   while (!pa.shouldClose() && !pb.shouldClose()) {
     testInput(pa);

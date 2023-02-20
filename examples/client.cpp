@@ -9,27 +9,27 @@ using namespace std;
 int main() {
 
   LOG("-> Awaiting input...\n");
-  PlayerConfiguration configuration;
-  read(0, &configuration, sizeof(configuration));
-  Player player(configuration);
-  vector<unsigned char> frame(configuration.width * configuration.height *
-                              configuration.channels);
+  TextureFormat format;
+  read(0, &format, sizeof(format));
+
+  RGBRenderPlayer player(format.width, format.height);
 
   bool reachEnd = false;
-  while (!player.shouldClose()) {
+  /*
+    while (!player.shouldClose()) {
 
-    if (!reachEnd) {
-      int status = readall(0, frame.data(), frame.size());
-      if (status == 0) {
-        LOG("EOF\n");
-        reachEnd = true;
-      } else if (status != frame.size()) {
-        LOG("Bad frame\n");
-        break;
-      } else {
-        player.uploadFrame((char *)frame.data());
+      if (!reachEnd) {
+        int status = readall(0, .data(), frame.size());
+        if (status == 0) {
+          LOG("EOF\n");
+          reachEnd = true;
+        } else if (status != frame.size()) {
+          LOG("Bad frame\n");
+          break;
+        } else {
+          player.uploadFrame((char *)frame.data());
+        }
       }
-    }
-    player.drawFrame();
-  }
+      player.drawFrame();
+    } */
 }

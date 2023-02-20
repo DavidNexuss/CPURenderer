@@ -8,7 +8,7 @@ int main() {
   int width = 1920 / 2;
   int height = 1080 / 2;
 
-  RenderPlayer player(width, height);
+  RGBRenderPlayer player(width, height);
 
   // Create render context (CPU rendering utilities)
   RenderContext ctx(player);
@@ -30,7 +30,7 @@ int main() {
 
     // Loop and write interpolation
     for (int fs = 0; fs < 800; fs++) {
-      player.native()[i] = {u(i / width), u(i % width), u(i % (width / 2))};
+      player.native()[i] = {i / width, i % width, i % (width / 2)};
       i++;
       i %= player.count();
     }
