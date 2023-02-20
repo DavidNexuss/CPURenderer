@@ -23,6 +23,9 @@ public:
   inline ScreenProxy operator[](int x) const { return {scr, x, width}; }
   inline color *native() const { return scr; }
   inline int count() const { return width * height; }
+
+  inline int getWidth() const { return width; }
+  inline int getHeight() const { return height; }
 };
 
 template <typename T> color Color(T a, T b, T c) { return {u(a), u(b), u(c)}; }

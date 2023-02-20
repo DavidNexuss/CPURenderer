@@ -8,7 +8,7 @@ class RenderContext {
 
   Screen scr;
   color brushColor{255, 255, 255};
-  std::chrono::milliseconds writeCharDelay;
+  std::chrono::milliseconds writeCharDelay = std::chrono::milliseconds::zero();
 
 public:
   RenderContext() {}
@@ -50,6 +50,9 @@ public:
    * Writes a string at a given position
    */
   void writeStr(int x, int y, const char *) const;
+
+  void writeData(int x, int y, int width, int height, void *data);
+  void writeTexture(int x, int y, const char *texturePath);
 
   /*
    * printf equivalent with writeStr

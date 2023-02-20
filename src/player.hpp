@@ -1,6 +1,7 @@
 #pragma once
+#include "gl.hpp"
 #include "screen.hpp"
-#include <memory>
+#include "window.hpp"
 #include <thread>
 #include <vector>
 
@@ -23,10 +24,14 @@ struct PlayerConfiguration {
   char *defaultFrameData = nullptr;
 };
 
-class Player : public Screen {
-  std::shared_ptr<PlayerInternal> internal;
+class Player : public Screen, public Window {
   std::thread renderThread;
   PlayerConfiguration configuration;
+
+  GLuint vbo;
+  GLuint program;
+  GLuint playerTexture;
+  GLuint texture;
 
 public:
   /**
@@ -40,14 +45,10 @@ public:
   void drawFrame();
 
   /**
-   * Uploads new data to the GPU.
-   **/
+   * Uploads new data to the GPU. If src is null, defaultFrameData will be used
+   *instead
+   */
   void uploadFrame(char *scr = nullptr);
-
-  /**
-   * Returns wether the user has issue the command to close the player.
-   **/
-  bool shouldClose();
 
   /**
    * Launches an async thread to constantly update the contents of the texture.
