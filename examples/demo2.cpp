@@ -42,10 +42,10 @@ int main() {
   RenderContext b = ctx;
   b.setBrushColor({255, 100, 255});
 
-  auto stop = A(a.writeStr(20, height - 20, readFile("README.md").c_str()););
+  auto stop = A(a.writeStr(20, height - 20, readFile("../README.md").c_str()););
   std::this_thread::sleep_for(200ms);
   auto stop2 =
-      A(b.writeStr(1000, height - 20, readFile("CMakeLists.txt").c_str()););
+      A(b.writeStr(1000, height - 20, readFile("../CMakeLists.txt").c_str()););
 
   std::this_thread::sleep_for(20000ms);
 }
