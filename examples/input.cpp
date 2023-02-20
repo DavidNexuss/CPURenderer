@@ -22,7 +22,7 @@ struct RenderPlayer : public ScreenBuffer, public Player {
 void testInput(RenderPlayer &player) {
   RenderContext ctx(player.toScreen());
 
-  color brushColor[] = {{255, 100, 100}, {100, 255, 100}};
+  color brushColor[] = {{255, 100, 100}, {100, 255, 100}, {100, 255, 255}};
 
   int top = std::min((player.toScreen().getScreenHeight() - 10) / 10,
                      GLFW_KEY_Z - GLFW_KEY_A) +
@@ -30,7 +30,8 @@ void testInput(RenderPlayer &player) {
 
   ctx.clear();
   for (int i = GLFW_KEY_A; i <= top; i++) {
-    ctx.setBrushColor(brushColor[player.isKeyPressed(i)]);
+    ctx.setBrushColor(
+        brushColor[player.isKeyPressed(i) + player.isKeyJustPressed(i)]);
     ctx.printf(20, 10 + 10 * (i - GLFW_KEY_A), "Tecla %c tecleada", char(i));
   }
 

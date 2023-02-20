@@ -16,9 +16,7 @@ void InputManager::key_callback(GLFWwindow *window, int key, int scancode,
                                 int action, int mods) {
   auto input = INP(window);
 
-  if (action == GLFW_PRESS)
-    input->m_keyPresses[key] = 1;
-  if (action == GLFW_REPEAT)
+  if (action == GLFW_PRESS || action == GLFW_REPEAT)
     input->m_keyPresses[key]++;
   if (action == GLFW_RELEASE)
     input->m_keyPresses[key] = 0;
