@@ -2,7 +2,6 @@
 #include "debug.hpp"
 #include "unistd.h"
 
-#define IODEBUG
 #ifdef IODEBUG
 #define S(X) X
 #else

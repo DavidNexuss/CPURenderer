@@ -15,6 +15,7 @@
 
 #include "debug.hpp"
 #include "player.hpp"
+#include "util.hpp"
 
 using namespace std;
 
@@ -113,31 +114,62 @@ GLuint uploadTexture(int width, int height, int channels, void *data) {
   return texture;
 }
 
+struct PlayerInternal {
+
+  GLFWwindow *window;
+  GLuint vbo;
+  GLuint program;
+  GLuint playerTexture;
+
+public:
+  PlayerInternal() {
+    // Create window
+    glfwInit();
+
+    window = glfwCreateWindow(640, 480, "Player", nullptr, nullptr);
+    glfwMakeContextCurrent(window);
+    glfwSetWindowSizeCallback(window, window_size_callback);
+    glewInit();
+
+    LOG("-> Window created\n");
+
+    // Opengl setup
+    program = compileProgram({compileShader("video.fs", GL_FRAGMENT_SHADER),
+                              compileShader("video.vs", GL_VERTEX_SHADER)});
+
+    vbo = uploadBuffer((void *)screenMesh, sizeof(screenMesh));
+
+    // Opengl binding
+    glUseProgram(program);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void *)0);
+  }
+
+  void drawFrame() {
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glfwPollEvents();
+    glfwSwapBuffers(window);
+  }
+
+  void uploadFrame(char *data, int width, int height, int ch) {
+    playerTexture = uploadTexture(width, height, ch, data);
+  }
+
+  bool shouldClose() { return glfwWindowShouldClose(window); }
+};
+
+bool Player::shouldClose() { return internal->shouldClose(); }
+void Player::drawFrame() { internal->drawFrame(); }
+void Player::uploadFrame(char *data, int width, int height, int ch) {
+  internal->uploadFrame(data, width, height, ch);
+}
+
+Player::Player() : internal(std::make_unique<PlayerInternal>()) {}
+
+#ifdef CLIENT
 int main() {
-  // Create window
-  glfwInit();
 
-  GLFWwindow *window = glfwCreateWindow(800, 800, "Player", nullptr, nullptr);
-  glfwMakeContextCurrent(window);
-  glfwSetWindowSizeCallback(window, window_size_callback);
-  glewInit();
-
-  LOG("-> Window created\n");
-
-  // Opengl setup
-  GLuint program =
-      compileProgram({compileShader("video.fs", GL_FRAGMENT_SHADER),
-                      compileShader("video.vs", GL_VERTEX_SHADER)});
-
-  GLuint vbo = uploadBuffer((void *)screenMesh, sizeof(screenMesh));
-
-  // Opengl binding
-  glUseProgram(program);
-  glEnableVertexAttribArray(0);
-  glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void *)0);
-
-  // Read player configuration
-
+  Player player;
   LOG("-> Awaiting input...\n");
   PlayerConfiguration configuration;
   read(0, &configuration, sizeof(configuration));
@@ -145,28 +177,45 @@ int main() {
   vector<unsigned char> frame(configuration.textureWidth *
                               configuration.textureHeight *
                               configuration.textureChannels);
-  GLuint playerTexture;
+
   bool reachEnd = false;
-  while (!glfwWindowShouldClose(window)) {
-    // Read next frame
+  while (!player.shouldClose()) {
+
     if (!reachEnd) {
       int status = readall(0, frame.data(), frame.size());
-      if (status != frame.size() && status != 0) {
-        LOG("-> Malformed frame! %d, expected %lu\n", status, frame.size());
-        break;
-      }
-      if (status > 0) {
-        playerTexture = uploadTexture(
-            configuration.textureWidth, configuration.textureHeight,
-            configuration.textureChannels, frame.data());
-      } else {
+      if (status == 0) {
+        LOG("EOF\n");
         reachEnd = true;
-        LOG("-> Reach EOF\n");
+      } else if (status != frame.size()) {
+        LOG("Bad frame\n");
+        break;
+      } else {
+        player.uploadFrame((char *)frame.data(), configuration.textureWidth,
+                           configuration.textureHeight,
+                           configuration.textureChannels);
       }
     }
-    // Draw frame
-    glDrawArrays(GL_TRIANGLES, 0, 6);
-    glfwPollEvents();
-    glfwSwapBuffers(window);
+    player.drawFrame();
   }
+}
+#endif
+
+#include <iostream>
+#include <thread>
+char *Player::launch(int width, int height, int ch) {
+  static std::vector<char> data(width * height * ch);
+  char *scr = data.data();
+
+  glfwMakeContextCurrent(nullptr);
+  renderThread = std::thread([=]() {
+    LOG("-> Rendering thread launched\n");
+    glfwMakeContextCurrent(this->internal->window);
+    while (!this->internal->shouldClose()) {
+      this->uploadFrame(scr, width, height, ch);
+      this->drawFrame();
+    }
+    LOG("-> Window closed, rendering thread stopped\n");
+  });
+
+  return scr;
 }
