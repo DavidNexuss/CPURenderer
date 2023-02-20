@@ -4,8 +4,8 @@
 #include <renderContext.hpp>
 
 int main() {
-  int width = 1920;
-  int height = 1080;
+  int width = 1920 / 2;
+  int height = 1080 / 2;
   ScreenBuffer screen(width, height);
   ScreenBuffer backbuffer(width, height);
 
@@ -70,8 +70,8 @@ setup:
 
     ctx.printf(20, player.getScreenHeight() - 20, "%d %d %d", Salive, SdeadDown,
                SdeadUp);
-    ctx.printf(20, player.getScreenWidth() - 40,
-               "Use keys Q-A W-S E-D for changing life rules");
+    ctx.writeStr(20, player.getScreenHeight() - 40,
+                 "Use keys Q-A W-S E-D for changing life rules");
     screen = backbuffer;
     player.uploadFrame((char *)screen.native());
     player.drawFrame();
