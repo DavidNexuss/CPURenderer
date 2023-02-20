@@ -17,5 +17,5 @@ void main() {
 
   avg_glow = avg_glow / 20.0f;
   color = texture(tex, uv).xyz  + avg_glow * 0.6;
-  color.x = texture(tex, uv + vec2(0.001,0.001)).x;
+  color.x = texture(tex, uv + vec2(0.0001,0.0001)).x;
 }

@@ -26,6 +26,14 @@ public:
 
   inline int getScreenWidth() const { return width; }
   inline int getScreenHeight() const { return height; }
+
+  Screen(int width, int height, color *_scr) {
+    this->width = width;
+    this->height = height;
+    this->scr = _scr;
+  }
+
+  Screen() {}
 };
 
 template <typename T> color Color(T a, T b, T c) { return {u(a), u(b), u(c)}; }
@@ -40,5 +48,12 @@ struct ScreenBuffer : public Screen {
     Screen::width = width;
     Screen::height = height;
     Screen::scr = buffer.data();
+  }
+
+  ScreenBuffer(const ScreenBuffer &other) {
+    buffer = other.buffer;
+    Screen::scr = buffer.data();
+    Screen::width = other.width;
+    Screen::height = other.height;
   }
 };
