@@ -83,3 +83,27 @@ void RenderContext::writeStr(int x, int y, const char *str) const {
     str++;
   }
 }
+
+#include <stb/stb_image.h>
+
+void RenderContext::writeData(int x, int y, int width, int height,
+                              unsigned char *data) {
+  for (int j = 0; j < height; j++) {
+    for (int i = 0; i < width; i++) {
+      scr[i + x][j + y] = {data[(j * width + i) * 3],
+                           data[(j * width + i) * 3 + 1],
+                           data[(j * width + i) * 3 + 2]
+
+      };
+    }
+  }
+}
+void RenderContext::writeTexture(int x, int y, const char *texturePath) {
+  int width;
+  int height;
+  int channels;
+  stbi_set_flip_vertically_on_load(true);
+  unsigned char *data = stbi_load(texturePath, &width, &height, &channels, 3);
+  writeData(x, y, width, height, data);
+  stbi_image_free(data);
+}

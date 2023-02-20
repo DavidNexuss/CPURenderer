@@ -51,7 +51,14 @@ public:
    */
   void writeStr(int x, int y, const char *) const;
 
-  void writeData(int x, int y, int width, int height, void *data);
+  /*
+   * Performs a from the source buffer to the screen buffer
+   */
+  void writeData(int x, int y, int width, int height, unsigned char *data);
+
+  /**
+   * Writes a texture to the given position
+   */
   void writeTexture(int x, int y, const char *texturePath);
 
   /*

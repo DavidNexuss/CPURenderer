@@ -11,7 +11,8 @@
 
 using namespace std;
 
-Player::Player(PlayerConfiguration configuration) : Window(800, 600, "Player") {
+Player::Player(PlayerConfiguration configuration)
+    : Window(configuration.width, configuration.height, "Player") {
 
   // Screen configuration
   this->configuration = configuration;
