@@ -8,17 +8,8 @@ int main() {
   int width = 1920 / 2;
   int height = 1920 / 2;
 
-  ScreenBuffer screenA(width, height);
-  ScreenBuffer screenB(width, height);
-
-  PlayerConfiguration configuration;
-  configuration.width = screenA.getScreenWidth();
-  configuration.height = screenA.getScreenHeight();
-  configuration.defaultFrameData = (char *)screenA.native();
-
-  Player a(configuration);
-  configuration.defaultFrameData = (char *)screenB.native();
-  Player b(configuration);
+  RenderPlayer a(width, height);
+  RenderPlayer b(width, height);
 
   a.launch();
   b.launch();
@@ -27,10 +18,10 @@ int main() {
   while (!a.shouldClose()) {
 
     for (int fs = 0; fs < 20; fs++) {
-      screenA.native()[i] = {u(i / width), u(i % width), u(i % (width))};
-      screenB.native()[i] = {u(i % width), u(i / width), u(i % (width))};
+      a.native()[i] = {u(i / width), u(i % width), u(i % (width))};
+      b.native()[i] = {u(i % width), u(i / width), u(i % (width))};
       i++;
-      i %= screenA.count();
+      i %= b.count();
     }
 
     std::this_thread::sleep_for(20us);

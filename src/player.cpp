@@ -23,9 +23,17 @@ Player::Player(PlayerConfiguration configuration)
   // Create window
   LOG("-> Window created\n");
 
+  if (configuration.fragmentShaderOverride == nullptr)
+    configuration.fragmentShaderOverride = video_fs;
+  if (configuration.vertexShaderOverride == nullptr)
+    configuration.vertexShaderOverride = video_vs;
+
   // Opengl setup
-  program = gl::compileProgram({gl::compileShader(video_fs, GL_FRAGMENT_SHADER),
-                                gl::compileShader(video_vs, GL_VERTEX_SHADER)});
+  program = gl::compileProgram(
+      {gl::compileShader(configuration.fragmentShaderOverride,
+                         GL_FRAGMENT_SHADER),
+       gl::compileShader(configuration.vertexShaderOverride,
+                         GL_VERTEX_SHADER)});
 
   vbo = gl::uploadBuffer((void *)screenMesh, sizeof(screenMesh));
 
@@ -76,4 +84,17 @@ void Player::launch(char **scr) {
     }
     LOG("-> Window closed, rendering thread stopped\n");
   });
+}
+
+PlayerConfiguration RenderPlayer::configure(int width, int height) {
+  PlayerConfiguration configuration;
+  configuration.width = width;
+  configuration.height = height;
+  return configuration;
+}
+
+RenderPlayer::RenderPlayer(int width, int height)
+    : Player(configure(width, height)), screenBuffer(width * height) {
+  Screen::scr = screenBuffer.data();
+  configuration.defaultFrameData = (char *)screenBuffer.data();
 }

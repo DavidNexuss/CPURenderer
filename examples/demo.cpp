@@ -7,16 +7,8 @@ int main() {
 
   int width = 1920 / 2;
   int height = 1080 / 2;
-  // Create screen buffer
-  std::vector<color> screenBuffer(width * height);
 
-  // Create player
-  PlayerConfiguration configuration;
-  configuration.width = width;
-  configuration.height = height;
-  configuration.defaultFrameData = (char *)screenBuffer.data();
-
-  Player player(configuration);
+  RenderPlayer player(width, height);
 
   // Create render context (CPU rendering utilities)
   RenderContext ctx(player);
@@ -38,7 +30,7 @@ int main() {
 
     // Loop and write interpolation
     for (int fs = 0; fs < 800; fs++) {
-      screenBuffer[i] = {u(i / width), u(i % width), u(i % (width / 2))};
+      player.native()[i] = {u(i / width), u(i % width), u(i % (width / 2))};
       i++;
       i %= player.count();
     }

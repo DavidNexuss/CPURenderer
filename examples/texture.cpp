@@ -11,27 +11,20 @@ int mrand(void) {
 }
 
 int main() {
-  int width = 920 + 40;
-  int height = 764 + 40;
-  ScreenBuffer buffer(width, height);
-  PlayerConfiguration config;
-  config.width = buffer.getScreenWidth();
-  config.height = buffer.getScreenHeight();
-  config.defaultFrameData = (char *)buffer.native();
-  Player player(config);
+  RenderPlayer player(920 + 40, 764 + 40);
   RenderContext ctx(player);
 
   ctx.writeTexture(20, 20, "../assets/sample.png");
 
   auto t = std::thread([&]() {
     while (true) {
-      int x = (mrand() % (width - 2)) + 1;
-      int y = (mrand() % (height - 2)) + 1;
+      int x = (mrand() % (player.getScreenWidth() - 2)) + 1;
+      int y = (mrand() % (player.getScreenHeight() - 2)) + 1;
 
       int px = (mrand() % 3) - 1;
       int py = (mrand() % 3) - 1;
 
-      std::swap(buffer[x][y], buffer[x + px][y + py]);
+      std::swap(player[x][y], player[x + px][y + py]);
     }
   });
 

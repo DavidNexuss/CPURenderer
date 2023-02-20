@@ -26,12 +26,14 @@ struct PlayerConfiguration {
 
 class Player : public Screen, public Window {
   std::thread renderThread;
-  PlayerConfiguration configuration;
 
   GLuint vbo;
   GLuint program;
   GLuint playerTexture;
   GLuint texture;
+
+protected:
+  PlayerConfiguration configuration;
 
 public:
   /**
@@ -54,4 +56,13 @@ public:
    * Launches an async thread to constantly update the contents of the texture.
    */
   void launch(char **scr = nullptr);
+};
+
+class RenderPlayer : public Player {
+  static PlayerConfiguration configure(int width, int height);
+
+  std::vector<color> screenBuffer;
+
+public:
+  RenderPlayer(int width, int height);
 };

@@ -18,6 +18,4 @@ void main() {\n\
 }\
 ";
 
-const static float screenMesh[] = {-1, -1, -1, 1,  1, 1,
-
-                                   1,  1,  -1, -1, 1, -1};
+const static float screenMesh[] = {-1, -1, -1, 1, 1, 1, 1, 1, -1, -1, 1, -1};

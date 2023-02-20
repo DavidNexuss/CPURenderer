@@ -39,6 +39,10 @@ add_executable(input examples/input.cpp)
 target_include_directories(input PUBLIC src)
 target_link_libraries(input drawLib GL GLEW)
 
+add_executable(life examples/life.cpp)
+target_include_directories(life PUBLIC src)
+target_link_libraries(life drawLib GL GLEW)
+
 
 add_executable(texture examples/texture.cpp)
 target_include_directories(texture PUBLIC src)
