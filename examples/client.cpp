@@ -14,10 +14,11 @@ struct PlayerConfiguration {
 
 int main() {
 
-  Player player;
   LOG("-> Awaiting input...\n");
   PlayerConfiguration configuration;
   read(0, &configuration, sizeof(configuration));
+  Player player(configuration.textureWidth, configuration.textureHeight,
+                configuration.textureChannels);
 
   vector<unsigned char> frame(configuration.textureWidth *
                               configuration.textureHeight *
@@ -35,9 +36,7 @@ int main() {
         LOG("Bad frame\n");
         break;
       } else {
-        player.uploadFrame((char *)frame.data(), configuration.textureWidth,
-                           configuration.textureHeight,
-                           configuration.textureChannels);
+        player.uploadFrame((char *)frame.data());
       }
     }
     player.drawFrame();

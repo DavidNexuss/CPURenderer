@@ -7,16 +7,34 @@ int main() {
 
   int width = 1920 / 2;
   int height = 1080 / 2;
+  // Create screen buffer
+  std::vector<color> screenBuffer(width * height);
 
-  RenderContext ctx(width, height);
-  color white = {255, 255, 255};
+  // Create player
+  Player player(width, height, 3);
 
-  int counter = 80;
+  // Create render context (CPU rendering utilities)
+  RenderContext ctx;
+  ctx.scr = Screen{width, height, screenBuffer.data()};
+  ctx.brushColor = {255, 255, 255};
 
-  ctx.printf({u(counter), u(counter * 2), u(counter * 3)}, 10, height - 10,
-             " Esta pantalla es de %dx%d:\n  Este es un mensaje de "
-             "prueba.\n Contador: %d",
-             width, height, counter);
+  // Render loop
+  while (!player.shouldClose()) {
+    // Clear screen buffer
+    ctx.clear();
+    // Printf in memory position
+    ctx.printf(20, height - 35,
+               " Esta pantalla es de %dx%d:\n  Este es un mensaje de prueba.",
+               width, height);
 
-  std::this_thread::sleep_for(1000000s);
+    // Draw box
+    ctx.drawBox(10, height - 50, 250, 40, 10);
+
+    // Upload screen buffer to the GPU
+    player.uploadFrame((char *)screenBuffer.data());
+    player.drawFrame();
+
+    // Sleep some time
+    std::this_thread::sleep_for(16ms);
+  }
 }

@@ -5,9 +5,6 @@ using color = std::array<unsigned char, 3>;
 using u = unsigned char;
 
 class Screen {
-  Player player;
-  color *scr;
-  int width;
 
   struct ScreenProxy {
     color *scr;
@@ -19,13 +16,16 @@ class Screen {
   };
 
 public:
-  Screen(int width, int height) {
-    scr = (color *)player.launch(width, height, 3);
-    this->width = width;
-  }
+  int width;
+  int height;
+  color *scr;
 
-  Screen(Screen &) = delete;
-  ScreenProxy operator[](int x) { return {scr, x, width}; }
-
+  inline ScreenProxy operator[](int x) { return {scr, x, width}; }
   inline color *native() { return scr; }
+  inline int count() { return width * height; }
 };
+
+template <typename T> color Color(T a, T b, T c) { return {u(a), u(b), u(c)}; }
+static color mul(color a, color b) {
+  return Color(a[0] * b[0], a[1] * b[1], a[2] * b[2]);
+}

@@ -169,26 +169,26 @@ public:
 
 bool Player::shouldClose() { return internal->shouldClose(); }
 void Player::drawFrame() { internal->drawFrame(); }
-void Player::uploadFrame(char *data, int width, int height, int ch) {
+void Player::uploadFrame(char *data) {
   internal->uploadFrame(data, width, height, ch);
 }
 
-Player::Player() : internal(std::make_unique<PlayerInternal>()) {}
+Player::Player(int width, int height, int channels)
+    : internal(std::make_unique<PlayerInternal>()) {
+  this->width = width;
+  this->height = height;
+  this->ch = channels;
+}
 
-char *Player::launch(int width, int height, int ch) {
-  static std::vector<char> data(width * height * ch);
-  char *scr = data.data();
-
+void Player::launch(char **scr) {
   glfwMakeContextCurrent(nullptr);
   renderThread = std::thread([=]() {
     LOG("-> Rendering thread launched\n");
     glfwMakeContextCurrent(this->internal->window);
     while (!this->internal->shouldClose()) {
-      this->uploadFrame(scr, width, height, ch);
+      this->uploadFrame(*scr);
       this->drawFrame();
     }
     LOG("-> Window closed, rendering thread stopped\n");
   });
-
-  return scr;
 }

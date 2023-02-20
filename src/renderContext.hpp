@@ -3,30 +3,23 @@
 #include <cstdio>
 
 class RenderContext {
-  Screen scr;
-  int count;
-
 public:
-  int width;
-  int height;
-
-  RenderContext(int width, int height);
-  inline Screen &screen() { return scr; }
+  Screen scr;
+  color brushColor;
 
   void clear();
-
-  void writeChar(int ch, int x, int y, color c);
+  void writeChar(int ch, int x, int y);
   void drawBox(int x, int y, int width, int height, int c);
+  void fillBox(int x, int y, int width, int height);
 
-  void writeStr(color c, int x, int y, const char *);
+  void writeStr(int x, int y, const char *);
 
-  template <typename... Args>
-  void printf(color c, int x, int y, Args &&...args) {
+  template <typename... Args> void printf(int x, int y, Args &&...args) {
     static std::vector<char> buffer(4096);
 
     int bufferSize = sprintf(buffer.data(), std::forward<Args>(args)...);
     int originalX = x;
 
-    writeStr(c, x, y, buffer.data());
+    writeStr(x, y, buffer.data());
   }
 };

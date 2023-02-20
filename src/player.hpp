@@ -9,12 +9,16 @@ class Player {
   std::shared_ptr<PlayerInternal> internal;
   std::thread renderThread;
 
+  int width;
+  int height;
+  int ch;
+
 public:
-  Player();
+  Player(int width, int height, int ch);
 
   void drawFrame();
-  void uploadFrame(char *data, int width, int height, int ch);
+  void uploadFrame(char *scr);
   bool shouldClose();
 
-  char *launch(int width, int height, int ch);
+  void launch(char **scr);
 };
