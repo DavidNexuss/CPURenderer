@@ -18,7 +18,7 @@ add_subdirectory(lib/stb)
 add_subdirectory(lib/imgui)
 add_library(drawLib ${SRC})
 target_link_libraries(drawLib glfw stb imgui)
-target_include_directories(drawLib PUBLIC lib/imgui)
+target_include_directories(drawLib PUBLIC lib/imgui lib)
 
 add_executable(client examples/client.cpp)
 target_include_directories(client PUBLIC src)

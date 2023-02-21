@@ -10,11 +10,12 @@ void main() {\n\
 ";
 static const char *video_fs = "\
 #version 330 core\n\
-out vec3 color;\n\
+out vec4 color;\n\
 uniform sampler2D tex;\n\
 in vec2 fs_pos;\n\
 void main() {\n\
-  color = texture(tex, fs_pos * 0.5 + 0.5).xyz; \n\
+  color = texture(tex, fs_pos * 0.5 + 0.5);\n\
+  color.w = 1.0; \n\
 }\
 ";
 

@@ -36,7 +36,6 @@ int main() {
   ivec square[4];
 
   while (!player.shouldClose()) {
-    ctx.clear();
     ctx.printf(20, player.getScreenHeight() - 20,
                "Posicion del cursor: %f %f, square %d", (float)player.getX(),
                (float)player.getY(), squareIndex);
@@ -48,15 +47,8 @@ int main() {
       rasterLine(player, square[i], square[(i + 1) % 4]);
     }
 
-    if (player.isKeyJustPressed(GLFW_MOUSE_BUTTON_LEFT)) {
-      square[squareIndex] = {x, y};
-      squareIndex++;
-
-      ivec dif = {square[1].x - square[0].x, square[1].y - square[0].y};
-      ivec n = {-dif.y, dif.x};
-      square[2] = {square[1].x + n.x, square[1].y + n.y};
-      square[3] = {square[0].x + n.x, square[0].y + n.y};
-      squareIndex %= 2;
+    if (player.isKeyPressed(GLFW_MOUSE_BUTTON_LEFT)) {
+      player[x][y] = {255, 255, 255};
     }
 
     player[x][y] = {255, 255, 255};

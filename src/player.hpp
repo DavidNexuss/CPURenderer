@@ -29,8 +29,9 @@ class Player : public Screen, public Window {
 
   GLuint vbo;
   GLuint program;
-  GLuint playerTexture;
-  GLuint texture;
+  std::vector<GLuint> playerTexture;
+
+  void checkTextureSupport(int index);
 
 protected:
   PlayerConfiguration configuration;
@@ -45,17 +46,20 @@ public:
    * Draws the current frame to the screen.
    */
   void drawFrame(bool hold = false);
+  void drawFrame(int text, bool hold = false);
 
   /**
    * Uploads new data to the GPU. If src is null, defaultFrameData will be used
    *instead
    */
   void uploadFrame(char *scr = nullptr);
+  void uploadFrame(int text, char *scr = nullptr);
 
   /**
    * Launches an async thread to constantly update the contents of the texture.
    */
   void launch(char **scr = nullptr);
+  void launch(int text, char **scr = nullptr);
 };
 
 class RenderPlayer : public Player {

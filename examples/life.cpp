@@ -6,6 +6,7 @@
 int main() {
   int width = 1920 / 2;
   int height = 1080 / 2;
+  ScreenBuffer overlay(width, height);
   ScreenBuffer screen(width, height);
   ScreenBuffer backbuffer(width, height);
 
@@ -20,7 +21,7 @@ int main() {
   int li = 10;
   int up = 0;
 
-  RenderContext ctx(backbuffer);
+  RenderContext ctx(overlay);
 setup:
   for (int i = 0; i < screen.count(); i++) {
     if ((rand() % 100) < 2) {
@@ -73,8 +74,12 @@ setup:
     ctx.writeStr(20, player.getScreenHeight() - 40,
                  "Use keys Q-A W-S E-D for changing life rules");
     screen = backbuffer;
+
     player.uploadFrame((char *)screen.native());
-    player.drawFrame();
+    player.drawFrame(true);
+
+    player.uploadFrame(1, (char *)overlay.native());
+    player.drawFrame(1);
     up++;
     if (up > 5) {
       li++;

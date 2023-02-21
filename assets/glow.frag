@@ -1,6 +1,6 @@
 #version 330 core
 
-out vec3 color;
+out vec4 color;
 uniform sampler2D tex;
 in vec2 fs_pos;
 
@@ -16,6 +16,7 @@ void main() {
   }
 
   avg_glow = avg_glow / 20.0f;
-  color = texture(tex, uv).xyz  + avg_glow * 0.6;
+  color.xyz = texture(tex, uv).xyz  + avg_glow * 0.6;
   color.x = texture(tex, uv + vec2(0.0001,0.0001)).x;
+  color.w = 1.0;
 }
