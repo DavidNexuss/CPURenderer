@@ -11,8 +11,13 @@ int mrand(void) {
 }
 
 int main() {
-  RenderPlayer<unsigned char, 3> player(920 + 40, 764 + 40);
+  int width = 920 + 40;
+  int height = 764 + 40;
+  RenderPlayer<unsigned char, 3> player(width, height);
+  ScreenBuffer<unsigned char, 3> overlay(width, height);
+
   RenderContext ctx(player);
+  RenderContext ctxo(overlay);
 
   ctx.writeTexture(20, 20, "../assets/sample.png");
 
@@ -28,6 +33,8 @@ int main() {
     }
   });
 
+  ctxo.writeStr(20, height - 20,
+                "Este es un ejemplo de la carga de texturas y del overlay");
   while (!player.shouldClose()) {
     if (player.isKeyJustPressed('E')) {
       ctx.writeTexture(20, 20, "../assets/sample.png");

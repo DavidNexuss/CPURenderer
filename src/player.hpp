@@ -67,6 +67,7 @@ public:
     this->channels = channels;
     this->channelsSize = sizeof(channels);
     this->format = *this;
+    this->configuration.defaultFrameData = (char *)this->source;
   }
 };
 

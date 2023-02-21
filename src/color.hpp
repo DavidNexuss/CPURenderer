@@ -7,14 +7,24 @@
 
 template <typename T, int count> struct vec : public std::array<T, count> {
 
+  vec(const vec &other) = default;
+
   vec(T val) {
     for (int i = 0; i < count; i++) {
       (*this)[i] = val;
     }
   }
 
+  inline vec &operator=(const vec &other) = default;
+
   template <typename... Args>
   vec(Args &&...args) : std::array<T, count>{{args...}} {}
+
+  vec(vec &&other) {
+    for (int i = 0; i < count; i++) {
+      (*this)[i] = other[i];
+    }
+  };
 
 #define OP(SIM)                                                                \
   vec operator SIM(const vec &other) const {                                   \
