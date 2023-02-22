@@ -12,9 +12,10 @@ int main() {
   TextureFormat format;
   read(0, &format, sizeof(format));
 
-  RGBRenderPlayer player(format.width, format.height);
-
+  Player player(format.width, format.height);
+  RGBScreenBuffer scr(format.width, format.height);
   bool reachEnd = false;
+
   /*
     while (!player.shouldClose()) {
 

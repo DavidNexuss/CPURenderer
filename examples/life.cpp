@@ -15,7 +15,7 @@ int main() {
   string fs = readFile("../assets/glow.frag");
   configuration.fragmentShaderOverride = fs.c_str();
 
-  Player player(screen, configuration);
+  Player player(width, height, configuration);
 
   int li = 10;
   int up = 0;
@@ -73,11 +73,12 @@ setup:
                  "Use keys Q-A W-S E-D for changing life rules");
     screen = backbuffer;
 
-    player.uploadFrame((char *)screen.native());
-    player.drawFrame(true);
-
-    player.uploadFrame(1, (char *)overlay.native());
-    player.drawFrame(1);
+    player.clear();
+    player.uploadTexture(screen,0);
+    player.drawTexture(0);
+    player.uploadTexture(overlay, 1);
+    player.drawTexture(1);
+    player.swapBuffers();
     up++;
     if (up > 5) {
       li++;

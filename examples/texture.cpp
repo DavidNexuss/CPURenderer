@@ -14,10 +14,11 @@ int main() {
   int width = 920 + 40;
   int height = 764 + 40;
 
-  RenderPlayer<unsigned char, 3> player(width, height);
+  Player player(width, height);
+  ScreenBuffer<unsigned char, 3> scr(width, height);
   ScreenBuffer<unsigned char, 3> overlay(width, height);
 
-  RenderContext ctx(player);
+  RenderContext ctx(scr);
   ctx.setBrushColor({0, 0, 0});
   RenderContext ctxo(overlay);
 
@@ -25,26 +26,28 @@ int main() {
 
   auto t = std::thread([&]() {
     while (true) {
-      int x = (mrand() % (player.width - 2)) + 1;
-      int y = (mrand() % (player.height - 2)) + 1;
+      int x = (mrand() % (scr.width - 2)) + 1;
+      int y = (mrand() % (scr.height - 2)) + 1;
 
       int px = (mrand() % 3) - 1;
       int py = (mrand() % 3) - 1;
 
-      std::swap(player[x][y], player[x + px][y + py]);
+      std::swap(scr[x][y], scr[x + px][y + py]);
     }
   });
 
   ctx.writeStr(20, height - 20,
                "Este es un ejemplo de la carga de texturas y del overlay");
-  player.uploadFrame(1, (char *)overlay.native());
+  player.uploadTexture(overlay, 1);
+
   while (!player.shouldClose()) {
     if (player.isKeyJustPressed('E')) {
       ctx.writeTexture(20, 20, "../assets/sample.png");
     }
-    player.uploadFrame();
-    player.drawFrame(true);
-    player.drawFrame(1);
+    player.uploadTexture(scr);
+    player.drawTexture(0);
+    player.drawTexture(1);
+    player.swapBuffers();
     std::this_thread::sleep_for(16ms);
   }
 }

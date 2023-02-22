@@ -8,20 +8,22 @@ int main() {
   int width = 1920 / 2;
   int height = 1920 / 2;
 
-  RGBRenderPlayer a(width, height);
-  RGBRenderPlayer b(width, height);
+  Player pa(width, height);
+  Player pb(width, height);
+  RGBScreenBuffer scra(width, height);
+  RGBScreenBuffer scrb(width, height);
 
-  a.launch();
-  b.launch();
+  auto athread = pa.launch(scra);
+  auto bthread = pb.launch(scrb);
 
   int i = 0;
-  while (!a.shouldClose()) {
+  while (!pa.shouldClose()) {
 
     for (int fs = 0; fs < 20; fs++) {
-      a.native()[i] = {i / width, i % width, i % (width)};
-      b.native()[i] = {i % width, i / width, i % (width)};
+      scra.native()[i] = {i / width, i % width, i % (width)};
+      scrb.native()[i] = {i % width, i / width, i % (width)};
       i++;
-      i %= b.count();
+      i %= scrb.count();
     }
 
     std::this_thread::sleep_for(20us);

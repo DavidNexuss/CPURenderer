@@ -53,3 +53,7 @@ target_link_libraries(texture drawLib GL GLEW)
 add_executable(vc examples/vc.cpp)
 target_include_directories(vc PUBLIC src)
 target_link_libraries(vc drawLib GL GLEW)
+
+add_executable(channels examples/channels.cpp)
+target_include_directories(channels PUBLIC src)
+target_link_libraries(channels drawLib GL GLEW)

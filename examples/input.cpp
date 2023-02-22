@@ -8,13 +8,13 @@ using namespace std;
 
 std::string text;
 
-void testInput(RGBRenderPlayer &player) {
-  RenderContext ctx(player);
+void testInput(Player& player, RGBScreen& scr) {
+  RenderContext ctx(scr);
 
   std::array<rgb, 3> brushColor = {rgb(255, 100, 100), rgb(100, 255, 100), rgb(100, 255, 255)};
 
   int top =
-      std::min((player.height - 10) / 10, GLFW_KEY_Z - GLFW_KEY_A) + GLFW_KEY_A;
+      std::min((scr.width - 10) / 10, GLFW_KEY_Z - GLFW_KEY_A) + GLFW_KEY_A;
 
   ctx.clear();
   for (int i = GLFW_KEY_A; i <= top; i++) {
@@ -30,10 +30,10 @@ void testInput(RGBRenderPlayer &player) {
   ctx.printf(200, 100, "cursor: %d %d", player.getX(), player.getY());
   ctx.printf(200, 110, "ventana: %d %d", player.getWindowWidth(),
              player.getWindowHeight());
-  ctx.writeStr(150, player.height - 20, text.c_str());
+  ctx.writeStr(150, scr.height - 20, text.c_str());
 
-  player.uploadFrame();
-  player.drawFrame(true);
+  player.uploadTexture(scr);
+  player.drawTexture();
   player.beginImgui();
 
   if (ImGui::Begin("Some window")) {
@@ -44,12 +44,17 @@ void testInput(RGBRenderPlayer &player) {
 }
 
 int main() {
-  RGBRenderPlayer pa(1920 / 2, 1080 / 2);
-  RGBRenderPlayer pb(1920 / 2, 1080 / 2);
+  int width = 1920 / 2;
+  int height = 1080 / 2;
+  Player pa(width, height);
+  Player pb(width, height);
+
+  RGBScreenBuffer scra(width, height);
+  RGBScreenBuffer scrb(width, height);
 
   while (!pa.shouldClose() && !pb.shouldClose()) {
-    testInput(pa);
-    testInput(pb);
+    testInput(pa,scra);
+    testInput(pb, scrb);
 
     std::this_thread::sleep_for(10ms);
   }

@@ -8,10 +8,11 @@ int main() {
   int width = 1920 / 2;
   int height = 1080 / 2;
 
-  RGBRenderPlayer player(width, height);
+  RGBScreenBuffer scr(width, height);
+  Player player(width, height);
 
   // Create render context (CPU rendering utilities)
-  RenderContext ctx(player);
+  RenderContext ctx(scr);
   ctx.setBrushColor({255, 255, 255});
 
   // Render loop
@@ -26,17 +27,18 @@ int main() {
     ctx.drawBox(10, height - 50, 250, 40, 10);
 
     // Write a white pixel into coordinates (20,100)
-    player[20][100] = {255, 255, 255};
+    scr[20][100] = {255, 255, 255};
 
     // Loop and write interpolation
     for (int fs = 0; fs < 800; fs++) {
-      player.native()[i] = {i / width, i % width, i % (width / 2)};
+      scr.native()[i] = {i / width, i % width, i % (width / 2)};
       i++;
-      i %= player.count();
+      i %= scr.count();
     }
     // Upload screen buffer to the GPU
-    player.uploadFrame();
-    player.drawFrame();
+    player.uploadTexture(scr);
+    player.drawTexture();
+    player.swapBuffers();
 
     // Sleep some time
     std::this_thread::sleep_for(20ms);

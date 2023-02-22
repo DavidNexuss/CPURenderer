@@ -71,10 +71,10 @@ int main() {
   ctx.writeStr(20, height - 20, "This is the multiple channel texture example");
 
   //Upload textures to the GPU
-  player.uploadFrame(0,rgbScreen);
-  player.uploadFrame(1, rgScreen);
-  player.uploadFrame(2, rScreen);
-  player.uploadFrame(3, RGBScreen);
+  player.uploadTexture(rgbScreen, 0);
+  player.uploadTexture(rgScreen, 1);
+  player.uploadTexture(rScreen, 2);
+  player.uploadTexture(RGBScreen, 3);
 
   bool showFrames[] = {true, true, true, true};
 
@@ -84,10 +84,10 @@ int main() {
     player.clear();
 
     // Draw textures
-    if(showFrames[0]) player.drawFrame(0, true);
-    if(showFrames[1]) player.drawFrame(1, true);
-    if(showFrames[2]) player.drawFrame(2, true);
-    if(showFrames[3]) player.drawFrame(3, true);
+    if(showFrames[0]) player.drawTexture(0);
+    if(showFrames[1]) player.drawTexture(1);
+    if(showFrames[2]) player.drawTexture(2);
+    if(showFrames[3]) player.drawTexture(3);
 
     //Some UI options
     player.beginImgui();

@@ -11,12 +11,10 @@
 
 using namespace std;
 
-Player::Player(TextureFormat format, PlayerConfiguration configuration)
-    : Window(format.width, format.height, "Player") {
+Player::Player(int width, int height, PlayerConfiguration configuration) : Window(width, height, "Player") {
 
   // Screen configuration
   this->configuration = configuration;
-  this->format = format;
 
   // Create window
   LOG("-> Window created\n");
@@ -43,9 +41,8 @@ Player::Player(TextureFormat format, PlayerConfiguration configuration)
   // Textures setup
   playerTexture.push_back(-1);
 }
-Player::Player(int width, int height) : Player(TextureFormat(width,height) ,PlayerConfiguration{}) { }
 
-void Player::drawFrame(int textureIndex, bool hold) {
+void Player::drawTexture(int textureIndex) {
   makeContextCurrent();
   if (shouldDraw()) {
     if (signalViewportUpdate()) {
@@ -56,47 +53,31 @@ void Player::drawFrame(int textureIndex, bool hold) {
     gl::bindTexture(playerTexture[textureIndex]);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glfwPollEvents();
+    /*
     if (!hold) {
       swapBuffers();
       if (playerTexture.size() > 1) {
         clear();
       }
-    }
+    } */
   }
 }
 
-void Player::drawFrame(bool hold) { drawFrame(0, hold); }
-
-void Player::uploadFrame(int textureIndex, char *data) {
-  makeContextCurrent();
-  if (data == nullptr) {
-    data = configuration.defaultFrameData;
-  }
-  checkTextureSupport(textureIndex);
-  playerTexture[textureIndex] =
-      gl::uploadTexture(format.width, format.height, format.channels,
-                        format.channelsSize, data, playerTexture[textureIndex]);
-}
-void Player::uploadFrame(char *data) { uploadFrame(0, data); }
-void Player::uploadFrame(int texture, TextureFormat scr) {
+void Player::uploadTexture(TextureFormat scr, int texture) {
   makeContextCurrent();
   checkTextureSupport(texture);
   playerTexture[texture] = gl::uploadTexture(scr.width, scr.height, scr.channels, scr.channelsSize, (char*)scr.source, playerTexture[texture]);
 }
-void Player::uploadFrame(TextureFormat scr) {
-  uploadFrame(0, scr);
-}
-void Player::launch(char **scr) {
-  if (scr == nullptr) {
-    scr = &configuration.defaultFrameData;
-  }
+
+std::thread Player::launch(TextureFormat scr) {
   glfwMakeContextCurrent(nullptr);
-  renderThread = std::thread([=]() {
+  return std::thread([=]() {
     LOG("-> Rendering thread launched\n");
     this->makeContextCurrent(true);
     while (!this->shouldClose()) {
-      this->uploadFrame(*scr);
-      this->drawFrame();
+      this->uploadTexture(scr);
+      this->drawTexture();
+      this->swapBuffers();
     }
     LOG("-> Window closed, rendering thread stopped\n");
   });

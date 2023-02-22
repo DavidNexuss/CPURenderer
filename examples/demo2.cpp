@@ -23,10 +23,11 @@ int main() {
   int width = 1920;
   int height = 1080;
 
-  RGBRenderPlayer player(width, height);
-  player.launch();
+  Player player(width, height);
+  RGBScreenBuffer scr(width, height);
+  auto renderThread = player.launch(scr);
 
-  RenderContext ctx(player);
+  RenderContext ctx(scr);
   ctx.setBrushColor({255, 100, 100});
   ctx.setWriteCharDelay(5ms);
 
