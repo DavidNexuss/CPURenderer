@@ -41,33 +41,51 @@ Player::Player(TextureFormat format, PlayerConfiguration configuration)
   glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, (void *)0);
 
   // Textures setup
-  playerTexture = -1;
+  playerTexture.push_back(-1);
 }
+Player::Player(int width, int height) : Player(TextureFormat(width,height) ,PlayerConfiguration{}) { }
 
-void Player::drawFrame() {
+void Player::drawFrame(int textureIndex, bool hold) {
   makeContextCurrent();
   if (shouldDraw()) {
     if (signalViewportUpdate()) {
       glViewport(0, 0, InputManager::getWindowWidth(),
                  InputManager::getWindowHeight());
     }
+    checkTextureSupport(textureIndex);
+    gl::bindTexture(playerTexture[textureIndex]);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glfwPollEvents();
-    swapBuffers();
+    if (!hold) {
+      swapBuffers();
+      if (playerTexture.size() > 1) {
+        clear();
+      }
+    }
   }
 }
 
-void Player::uploadFrame(char *data) {
+void Player::drawFrame(bool hold) { drawFrame(0, hold); }
+
+void Player::uploadFrame(int textureIndex, char *data) {
   makeContextCurrent();
   if (data == nullptr) {
     data = configuration.defaultFrameData;
   }
-
-  playerTexture =
+  checkTextureSupport(textureIndex);
+  playerTexture[textureIndex] =
       gl::uploadTexture(format.width, format.height, format.channels,
-                        format.channelsSize, data, playerTexture);
+                        format.channelsSize, data, playerTexture[textureIndex]);
 }
-
+void Player::uploadFrame(char *data) { uploadFrame(0, data); }
+void Player::uploadFrame(int texture, TextureFormat scr) {
+  makeContextCurrent();
+  checkTextureSupport(texture);
+  playerTexture[texture] = gl::uploadTexture(scr.width, scr.height, scr.channels, scr.channelsSize, (char*)scr.source, playerTexture[texture]);
+}
+void Player::uploadFrame(TextureFormat scr) {
+  uploadFrame(0, scr);
+}
 void Player::launch(char **scr) {
   if (scr == nullptr) {
     scr = &configuration.defaultFrameData;
@@ -82,4 +100,15 @@ void Player::launch(char **scr) {
     }
     LOG("-> Window closed, rendering thread stopped\n");
   });
+}
+
+void Player::checkTextureSupport(int index) {
+  playerTexture.resize(std::max(index + 1, int(playerTexture.size())), -1);
+  if (playerTexture.size() > 1) {
+    // Enable texture blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_DST_ALPHA, GL_ZERO);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    clearColor(0, 0, 0, 0);
+  }
 }

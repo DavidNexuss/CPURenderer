@@ -13,10 +13,12 @@ int mrand(void) {
 int main() {
   int width = 920 + 40;
   int height = 764 + 40;
+
   RenderPlayer<unsigned char, 3> player(width, height);
   ScreenBuffer<unsigned char, 3> overlay(width, height);
 
   RenderContext ctx(player);
+  ctx.setBrushColor({0, 0, 0});
   RenderContext ctxo(overlay);
 
   ctx.writeTexture(20, 20, "../assets/sample.png");
@@ -33,14 +35,16 @@ int main() {
     }
   });
 
-  ctxo.writeStr(20, height - 20,
-                "Este es un ejemplo de la carga de texturas y del overlay");
+  ctx.writeStr(20, height - 20,
+               "Este es un ejemplo de la carga de texturas y del overlay");
+  player.uploadFrame(1, (char *)overlay.native());
   while (!player.shouldClose()) {
     if (player.isKeyJustPressed('E')) {
       ctx.writeTexture(20, 20, "../assets/sample.png");
     }
     player.uploadFrame();
-    player.drawFrame();
+    player.drawFrame(true);
+    player.drawFrame(1);
     std::this_thread::sleep_for(16ms);
   }
 }

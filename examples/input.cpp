@@ -1,7 +1,9 @@
+#include "imgui.h"
 #include <future>
 #include <player.hpp>
 #include <renderContext.hpp>
 #include <thread>
+#include <array>
 using namespace std;
 
 std::string text;
@@ -9,11 +11,10 @@ std::string text;
 void testInput(RGBRenderPlayer &player) {
   RenderContext ctx(player);
 
-  rgb brushColor[] = {{255, 100, 100}, {100, 255, 100}, {100, 255, 255}};
+  std::array<rgb, 3> brushColor = {rgb(255, 100, 100), rgb(100, 255, 100), rgb(100, 255, 255)};
 
   int top =
-      std::min((player.getScreenHeight() - 10) / 10, GLFW_KEY_Z - GLFW_KEY_A) +
-      GLFW_KEY_A;
+      std::min((player.height - 10) / 10, GLFW_KEY_Z - GLFW_KEY_A) + GLFW_KEY_A;
 
   ctx.clear();
   for (int i = GLFW_KEY_A; i <= top; i++) {
@@ -29,10 +30,17 @@ void testInput(RGBRenderPlayer &player) {
   ctx.printf(200, 100, "cursor: %d %d", player.getX(), player.getY());
   ctx.printf(200, 110, "ventana: %d %d", player.getWindowWidth(),
              player.getWindowHeight());
-  ctx.writeStr(150, player.getScreenHeight() - 20, text.c_str());
+  ctx.writeStr(150, player.height - 20, text.c_str());
 
   player.uploadFrame();
-  player.drawFrame();
+  player.drawFrame(true);
+  player.beginImgui();
+
+  if (ImGui::Begin("Some window")) {
+    ImGui::End();
+  }
+  player.endImgui();
+  player.swapBuffers();
 }
 
 int main() {

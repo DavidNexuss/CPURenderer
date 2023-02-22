@@ -6,8 +6,10 @@
 int main() {
   int width = 1920 / 2;
   int height = 1080 / 2;
+
   RGBScreenBuffer screen(width, height);
   RGBScreenBuffer backbuffer(width, height);
+  RGBScreenBuffer overlay(width, height);
 
   PlayerConfiguration configuration;
   string fs = readFile("../assets/glow.frag");
@@ -18,7 +20,7 @@ int main() {
   int li = 10;
   int up = 0;
 
-  RenderContext ctx(backbuffer);
+  RenderContext ctx(overlay);
 setup:
   for (int i = 0; i < screen.count(); i++) {
     if ((rand() % 100) < 2) {
@@ -60,7 +62,7 @@ setup:
           }
         } else {
           if (alive == Salive) {
-            backbuffer[i][j] = {u(li * 2), u(li * 3), u(li * 5)};
+            backbuffer[i][j] = {li * 2, li * 3, li * 5};
           }
         }
       }
@@ -70,8 +72,12 @@ setup:
     ctx.writeStr(20, screen.height - 40,
                  "Use keys Q-A W-S E-D for changing life rules");
     screen = backbuffer;
+
     player.uploadFrame((char *)screen.native());
-    player.drawFrame();
+    player.drawFrame(true);
+
+    player.uploadFrame(1, (char *)overlay.native());
+    player.drawFrame(1);
     up++;
     if (up > 5) {
       li++;

@@ -3,6 +3,7 @@
 #include <cstdio>
 // include
 #include "gl.hpp"
+#include <GL/gl.h>
 
 GLuint gl::compileShader(const char *content, GLenum type) {
   GLuint shader = glCreateShader(type);
@@ -53,18 +54,40 @@ GLuint gl::uploadBuffer(void *data, int count) {
   return buffer;
 }
 
-GLuint gl::uploadTexture(int width, int height, int channels, bool isHDR,
-                         void *data, GLuint texture) {
-  if (texture == -1) {
-    glGenTextures(1, &texture);
+void gl::bindTexture(GLuint texture, bool force) {
+  static GLuint currentTexture = -1;
+  if (texture != currentTexture || force) {
     glBindTexture(GL_TEXTURE_2D, texture);
+  }
+  currentTexture = texture;
+}
+
+GLuint gl::uploadTexture(int width, int height, int channels, int channelSize, void *data, GLuint texture) {
+
+  static GLuint formats[] = {
+    GL_RED,
+    GL_RG,
+    GL_RGB,
+    GL_RGBA
+  };
+
+  static GLuint channelType[] = {
+    GL_UNSIGNED_BYTE,
+    GL_FLOAT
+  };
+
+
+  if (texture == -1) {
+    int ch = channelSize > 1 ? 1 : 0;
+
+    glGenTextures(1, &texture);
+    gl::bindTexture(texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-                 GL_UNSIGNED_BYTE, data);
-    LOG("-> Texture created width: %d height: %d channels: %d\n", width, height,
-        channels);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, formats[channels - 1], channelType[ch], data);
+    LOG("-> Texture created width: %d height: %d channels: %d and HDR: %b\n", width, height, channels, ch);
   } else {
+    gl::bindTexture(texture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB,
                     GL_UNSIGNED_BYTE, data);
   }

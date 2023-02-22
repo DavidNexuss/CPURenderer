@@ -17,7 +17,7 @@ public:
   /**
    * Sets the active brushColor everything is rendered using brushColor
    */
-  inline void setBrushColor(rgb col) { brushColor = col; }
+  inline void setBrushColor(const rgb& col) { brushColor = col; }
 
   /**
    * Sets a delay between each writeChar invokation, useful for animations
@@ -66,6 +66,7 @@ public:
    */
   template <typename... Args> void printf(int x, int y, Args &&...args) const {
     static std::vector<char> buffer(4096);
+    sprintf(buffer.data(), std::forward<Args>(args)...);
     writeStr(x, y, buffer.data());
   }
 };
