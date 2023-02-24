@@ -26,7 +26,8 @@ public:
   /**
    * Creates a player with width height and special configuration
    */
-  Player(int width, int height, PlayerConfiguration configuration = PlayerConfiguration());
+  Player(int width, int height,
+         PlayerConfiguration configuration = PlayerConfiguration());
 
   /**
    * Draws texture with the given index
@@ -41,7 +42,7 @@ public:
    * @param scr The texture data
    * @param text The texture index
    */
-  void uploadTexture(TextureFormat scr,int text = 0);
+  void uploadTexture(TextureFormat scr, int text = 0);
 
   std::thread launch(TextureFormat scr);
 };
