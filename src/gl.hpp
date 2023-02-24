@@ -6,6 +6,5 @@ GLuint compileShader(const char *content, GLenum type);
 GLuint compileProgram(const std::vector<GLuint> &shaders);
 GLuint uploadBuffer(void *data, int count);
 GLuint uploadTexture(int width, int height, int channels, int channelSize, void *data, GLuint texture);
-
 void bindTexture(GLuint texture, bool force = false);
 } // namespace gl

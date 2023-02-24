@@ -3,6 +3,18 @@
 #include <player.hpp>
 #include <renderContext.hpp>
 
+
+void setupVectors(RGBScreen& screen, RGBScreen& backbuffer) {
+  for (int i = 0; i < screen.count(); i++) {
+    if ((rand() % 100) < 2) {
+      screen.native()[i] = {255, 255, 255};
+      backbuffer[i] = screen[i];
+    } else {
+      screen.native()[i] = {0, 0, 0};
+    }
+    backbuffer.native()[i] = screen.native()[i];
+  }
+}
 int main() {
   int width = 1920 / 2;
   int height = 1080 / 2;
@@ -21,28 +33,19 @@ int main() {
   int up = 0;
 
   RenderContext ctx(overlay);
-setup:
-  for (int i = 0; i < screen.count(); i++) {
-    if ((rand() % 100) < 2) {
-      screen.native()[i] = {255, 255, 255};
-      backbuffer[i] = screen[i];
-    } else {
-      screen.native()[i] = {0, 0, 0};
-    }
-    backbuffer.native()[i] = screen.native()[i];
-  }
 
   int Salive = 3;
   int SdeadUp = 3;
   int SdeadDown = 2;
 
+  setupVectors(screen, backbuffer);
   while (!player.shouldClose()) {
     if (player.isKeyJustPressed('R')) {
-      goto setup;
+      setupVectors(screen, backbuffer);
     }
-    Salive += player.isKeyJustPressed('Q') - player.isKeyJustPressed('A');
+    Salive    += player.isKeyJustPressed('Q') - player.isKeyJustPressed('A');
     SdeadDown += player.isKeyJustPressed('W') - player.isKeyJustPressed('S');
-    SdeadUp += player.isKeyJustPressed('E') - player.isKeyJustPressed('D');
+    SdeadUp   += player.isKeyJustPressed('E') - player.isKeyJustPressed('D');
     for (int i = 1; i < (width - 1); i++) {
       for (int j = 1; j < (height - 1); j++) {
         int alive = 0;

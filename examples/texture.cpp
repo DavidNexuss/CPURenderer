@@ -44,6 +44,7 @@ int main() {
     if (player.isKeyJustPressed('E')) {
       ctx.writeTexture(20, 20, "../assets/sample.png");
     }
+    player.clear();
     player.uploadTexture(scr);
     player.drawTexture(0);
     player.drawTexture(1);

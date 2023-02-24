@@ -24,21 +24,22 @@ protected:
 
 public:
   /**
-   * Creates a player with width, height and channels option.
+   * Creates a player with width height and special configuration
    */
   Player(int width, int height, PlayerConfiguration configuration = PlayerConfiguration());
 
   /**
-   * Draws texture
+   * Draws texture with the given index
    * @brief drawTexture
-   * @param text
+   * @param text The texture index
    */
   void drawTexture(int text = 0);
 
   /**
+   * Uploads texture with the given data and index
    * @brief uploadTexture
-   * @param scr
-   * @param text
+   * @param scr The texture data
+   * @param text The texture index
    */
   void uploadTexture(TextureFormat scr,int text = 0);
 

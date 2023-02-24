@@ -85,7 +85,7 @@ GLuint gl::uploadTexture(int width, int height, int channels, int channelSize, v
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, formats[channels - 1], channelType[ch], data);
-    LOG("-> Texture created width: %d height: %d channels: %d and HDR: %b\n", width, height, channels, ch);
+    LOG("-> Texture created width: %d height: %d channels: %d and HDR: %d\n", width, height, channels, ch);
   } else {
     gl::bindTexture(texture);
     glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGB,

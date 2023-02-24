@@ -139,7 +139,11 @@ void Window::endImgui() {
   ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void Window::swapBuffers() { glfwSwapBuffers(window); }
+void Window::swapBuffers() {
+  glfwSwapBuffers(window);
+  glfwPollEvents();
+}
+
 bool Window::shouldClose() { return glfwWindowShouldClose(window); }
 bool Window::shouldDraw() { return true; }
 

@@ -26,10 +26,8 @@ Player::Player(int width, int height, PlayerConfiguration configuration) : Windo
 
   // Opengl setup
   program = gl::compileProgram(
-      {gl::compileShader(configuration.fragmentShaderOverride,
-                         GL_FRAGMENT_SHADER),
-       gl::compileShader(configuration.vertexShaderOverride,
-                         GL_VERTEX_SHADER)});
+      {gl::compileShader(configuration.fragmentShaderOverride, GL_FRAGMENT_SHADER),
+       gl::compileShader(configuration.vertexShaderOverride, GL_VERTEX_SHADER)});
 
   vbo = gl::uploadBuffer((void *)screenMesh, sizeof(screenMesh));
 
@@ -46,20 +44,11 @@ void Player::drawTexture(int textureIndex) {
   makeContextCurrent();
   if (shouldDraw()) {
     if (signalViewportUpdate()) {
-      glViewport(0, 0, InputManager::getWindowWidth(),
-                 InputManager::getWindowHeight());
+      glViewport(0, 0, InputManager::getWindowWidth(),InputManager::getWindowHeight());
     }
     checkTextureSupport(textureIndex);
     gl::bindTexture(playerTexture[textureIndex]);
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    glfwPollEvents();
-    /*
-    if (!hold) {
-      swapBuffers();
-      if (playerTexture.size() > 1) {
-        clear();
-      }
-    } */
   }
 }
 
